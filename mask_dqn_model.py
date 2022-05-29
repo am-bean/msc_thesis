@@ -1,11 +1,15 @@
 import numpy as np
 
+from copy import deepcopy
+
 from ray.rllib.agents.dqn.dqn_torch_model import DQNTorchModel
+from ray.rllib.agents.registry import get_agent_class
 from ray.rllib.examples.policy.random_policy import RandomPolicy
 from ray.rllib.models.torch.fcnet import FullyConnectedNetwork as TorchFC
 from ray.rllib.utils.framework import try_import_torch
 from ray.rllib.utils.torch_utils import FLOAT_MAX
 from ray.rllib.utils.annotations import override
+
 
 import cards_env
 
@@ -50,8 +54,8 @@ class TorchMaskedActions(DQNTorchModel):
         masked_actions = action_logits + inf_mask
         return masked_actions, state
 
-    # def value_function(self):
-    #    return self.action_embed_model.value_function()
+    def value_function(self):
+        return self.action_embed_model.value_function()
 
 
 class MaskedRandomPolicy(RandomPolicy):
@@ -73,3 +77,34 @@ class MaskedRandomPolicy(RandomPolicy):
         # e.g.: np.array([random.choice([0, 1])] * len(obs_batch))
 
         return [np.random.choice(obs[:cards_env.N_CARDS].nonzero()[0]) for obs in obs_batch], [], {}
+
+
+def default_config():
+    config = deepcopy(get_agent_class('DQN')._default_config)
+
+    config["v_min"] = -10.0
+    config["v_max"] = 10.0
+    config["lr"] = 0.001
+    config["num_gpus"] = 1 if torch.cuda.is_available() else 0
+    config["log_level"] = "DEBUG"
+    config["num_workers"] = 1
+    config["rollout_fragment_length"] = 30
+    config["train_batch_size"] = 200
+    config["horizon"] = 200
+    config["no_done_at_end"] = False
+    config["framework"] = "torch"
+
+    config["n_step"] = 1
+
+    config["exploration_config"] = {
+        # The Exploration class to use.
+        "type": "EpsilonGreedy",
+        # Config for the Exploration class' constructor:
+        "initial_epsilon": 0.1,
+        "final_epsilon": 0.0,
+        "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
+    }
+    config["hiddens"] = []
+    config["dueling"] = False
+
+    return config
