@@ -1,15 +1,6 @@
-"""Simple example of how to restore only one of n agents from a trained
-multi-agent Trainer using Ray tune.
-
-The trick/workaround is to use an intermediate trainer that loads the
-trained checkpoint into all policies and then reverts those policies
-that we don't want to restore, then saves a new checkpoint, from which
-tune can pick up training.
-
-Control the number of agents and policies via --num-agents and --num-policies.
+"""Loads a pre-trained agent to play a demo game
 """
 
-import argparse
 from copy import deepcopy
 
 import ray
@@ -19,7 +10,6 @@ from ray.rllib.env import PettingZooEnv
 from ray.rllib.models import ModelCatalog
 from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
-from ray.rllib.agents.registry import get_agent_class
 
 import cards_env
 from best_checkpoints import best_checkpoints
@@ -29,14 +19,7 @@ from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
 
-parser = argparse.ArgumentParser()
-
-parser.add_argument("--stop-timesteps", type=int, default=15000)
-parser.add_argument("--num-cpus", type=int, default=2)
-
 if __name__ == "__main__":
-    run_new_model = False
-    args = parser.parse_args()
 
     ray.init(num_cpus=4)
 
@@ -45,13 +28,12 @@ if __name__ == "__main__":
         env = cards_env.env()
         return env
 
-
     ModelCatalog.register_custom_model("masked_dqn", TorchMaskedActions)
     register_env("cards", lambda config: PettingZooEnv(env_creator()))
 
-    single_env = PettingZooEnv(env_creator())
-    obs_space = single_env.observation_space
-    act_space = single_env.action_space
+    my_env = PettingZooEnv(env_creator())
+    obs_space = my_env.observation_space
+    act_space = my_env.action_space
 
     # Setup DQN with an ensemble of `num_policies` different policies.
 
@@ -69,23 +51,8 @@ if __name__ == "__main__":
         "policies_to_train": ["player_0"],
     }
 
-    # Do some training and store the checkpoint.
-    if run_new_model:
-        results = tune.run(
-            "DQN",
-            config=old_config,
-            stop={"timesteps_total": 150000},
-            verbose=1,
-            checkpoint_freq=1000,
-            checkpoint_at_end=True,
-        )
-
-        print("Pre-training done.")
-
-        best_checkpoint = results.get_last_checkpoint(results.trials[0])
-    else:
-        best_checkpoint = best_checkpoints()['first_round']
-    print(f".. best checkpoint was: {best_checkpoint}")
+    # Load the checkpoint.
+    best_checkpoint = best_checkpoints()['first_round']
 
     new_config = deepcopy(old_config)
     new_config["multiagent"] = {
@@ -110,18 +77,19 @@ if __name__ == "__main__":
     trained_weights = dummy_trainer.get_weights()
     # Set all the weights to the trained agent weights
     new_trainer.set_weights({pid: trained_weights['player_0'] for pid, _ in untrained_weights.items()})
-    # Create the checkpoint from which tune can pick up the
-    # experiment.
-    new_checkpoint = new_trainer.save()
-    print(".. checkpoint to restore from (all policies loaded"
-          f"): {new_checkpoint}")
 
-    results = tune.run(
-        "DQN",
-        stop={"timesteps_total": args.stop_timesteps},
-        config=new_config,
-        checkpoint_freq=1000,
-        verbose=1
-    )
+    # run until episode ends
+    episode_reward = 0
+    done = False
+    obs = my_env.reset()
+    my_env.render()
+    while not done:
+        agent = list(obs.keys())[0]
+        action = new_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
+        action_dict = {agent: action}
+        obs, reward, dones, info = my_env.step(action_dict)
+        my_env.render()
+        done = dones['__all__']
+        #episode_reward += reward
 
     ray.shutdown()

@@ -99,10 +99,12 @@ class raw_env(AECEnv):
         up a graphical window, or open up some other display that a human can see and understand.
         """
         if all(self.dones.values()):
-            string = "Game over"
+            print("Game over")
         else:
-            string = f"Current round: {self.current_round}"
-        print(string)
+            print(f"Current round: {self.current_round}")
+            print(f"Tricks taken: {self.tricks_taken}")
+            print(f"Current play: {self.cards_played}")
+            print(f"Current hand: {self.hands[self.agent_selection]}")
 
     def observe(self, agent):
         """
