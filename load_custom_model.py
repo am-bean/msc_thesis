@@ -10,9 +10,6 @@ Control the number of agents and policies via --num-agents and --num-policies.
 """
 
 import argparse
-import gym
-import os
-import random
 from copy import deepcopy
 
 import ray
@@ -25,34 +22,29 @@ from ray.rllib.utils.framework import try_import_torch
 from ray.rllib.agents.registry import get_agent_class
 
 import cards_env
+from best_checkpoints import best_checkpoints
 from custom_env_test import MaskedRandomPolicy
 from custom_env_test import TorchMaskedActions
-from ray.rllib.utils.framework import try_import_tf
-from ray.rllib.utils.test_utils import check_learning_achieved
+from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--num-agents", type=int, default=4)
-parser.add_argument("--num-policies", type=int, default=2)
-parser.add_argument("--pre-training-iters", type=int, default=5)
-parser.add_argument("--stop-iters", type=int, default=200)
-parser.add_argument("--stop-reward", type=float, default=150)
-parser.add_argument("--stop-timesteps", type=int, default=150000)
+parser.add_argument("--stop-timesteps", type=int, default=15000)
 parser.add_argument("--num-cpus", type=int, default=2)
-parser.add_argument("--as-test", action="store_true")
-parser.add_argument("--framework", choices=["tf2", "tf", "tfe", "torch"], default="torch")
 
 if __name__ == "__main__":
+    run_new_model = False
     args = parser.parse_args()
 
-    ray.init(num_cpus=args.num_cpus)
+    ray.init(num_cpus=4)
 
     # Get obs- and action Spaces.
     def env_creator():
         env = cards_env.env()
         return env
+
 
     ModelCatalog.register_custom_model("pa_model", TorchMaskedActions)
     register_env("cards", lambda config: PettingZooEnv(env_creator()))
@@ -63,11 +55,9 @@ if __name__ == "__main__":
 
     # Setup DQN with an ensemble of `num_policies` different policies.
 
-    old_config = deepcopy(get_agent_class('DQN')._default_config)
+    old_config = default_config()
 
     old_config["env"] = "cards"
-    old_config["env_config"] = {"num_agents": args.num_agents}
-    old_config["num_gpus"] = 1 if torch.cuda.is_available() else 0
     old_config["multiagent"] = {
         "policies": {
             "player_0": (None, obs_space, act_space, {"model": {"custom_model": "pa_model"}}),
@@ -77,36 +67,9 @@ if __name__ == "__main__":
         },
         "policy_mapping_fn": lambda agent_id: agent_id,
         "policies_to_train": ["player_0"],
-        }
-    old_config["framework"] = args.framework
-    old_config["v_min"] = -10.0
-    old_config["v_max"] = 10.0
-    old_config["lr"] = 0.001
-    old_config["num_gpus"] = 1 if torch.cuda.is_available() else 0
-    old_config["log_level"] = "DEBUG"
-    old_config["num_workers"] = 1
-    old_config["rollout_fragment_length"] = 30
-    old_config["train_batch_size"] = 200
-    old_config["horizon"] = 200
-    old_config["no_done_at_end"] = False
-    old_config["framework"] = "torch"
-
-    old_config["n_step"] = 1
-
-    old_config["exploration_config"] = {
-        # The Exploration class to use.
-        "type": "EpsilonGreedy",
-        # Config for the Exploration class' constructor:
-        "initial_epsilon": 0.1,
-        "final_epsilon": 0.0,
-        "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
     }
-    old_config["hiddens"] = []
-    old_config["dueling"] = False
-    old_config["env"] = "cards"
 
     # Do some training and store the checkpoint.
-    run_new_model = False
     if run_new_model:
         results = tune.run(
             "DQN",
@@ -117,13 +80,11 @@ if __name__ == "__main__":
             checkpoint_at_end=True,
         )
 
-    print("Pre-training done.")
+        print("Pre-training done.")
 
-    # Load previously trained best checkpoint
-    if run_new_model:
-        best_checkpoint = results.get_last_checkpoint(results.trials[0], mode="max")
+        best_checkpoint = results.get_last_checkpoint(results.trials[0])
     else:
-        best_checkpoint = "C:/Users/Andre/ray_results/DQN" + "/DQN_cards_ab6b7_00000_0_2022-05-28_07-30-30/checkpoint_032000/checkpoint-32000"
+        best_checkpoint = best_checkpoints()['first_round']
     print(f".. best checkpoint was: {best_checkpoint}")
 
     new_config = deepcopy(old_config)
@@ -136,7 +97,7 @@ if __name__ == "__main__":
         },
         "policy_mapping_fn": lambda agent_id: agent_id,
         "policies_to_train": ["player_0"],
-        }
+    }
 
     # Create a dummy Trainer to load our checkpoint.
     dummy_trainer = DQNTrainer(config=old_config)
@@ -155,19 +116,9 @@ if __name__ == "__main__":
     print(".. checkpoint to restore from (all policies loaded"
           f"): {new_checkpoint}")
 
-    print("Starting new tune.run")
-
-    # Start our actual experiment.
-    stop = {
-        "timesteps_total": args.stop_timesteps
-    }
-
-    # Make sure, the non-1st policies are not updated anymore.
-    new_config["multiagent"]["policies_to_train"] = ["policy_0"]
-
     results = tune.run(
         "DQN",
-        stop=stop,
+        stop={"timesteps_total": args.stop_timesteps},
         config=new_config,
         checkpoint_freq=1000,
         verbose=1

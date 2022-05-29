@@ -48,6 +48,7 @@ if __name__ == "__main__":
         "policy_mapping_fn": lambda agent_id: agent_id,
         "policies_to_train": ["player_0"],
     }
+    config['env'] = 'cards'
 
     ray.init(num_cpus=num_cpus)
 
