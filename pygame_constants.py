@@ -1,0 +1,12 @@
+# Define constants for the screen width and height
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 700
+
+CARD_WIDTH = SCREEN_WIDTH * .08
+CARD_RATIO = 1.455
+CARD_HEIGHT = CARD_WIDTH * CARD_RATIO
+BORDER_THICKNESS = .97
+
+BLUE = (0, 33, 71, 255)
+WHITE = (255, 255, 255, 0)
+BLACK = (0, 0, 0, 0)
