@@ -138,7 +138,10 @@ class raw_env(AECEnv):
         Here it sets up the state dictionary which is used by step() and the observations dictionary which is used by step() and observe()
         """
         np.random.seed(seed)
-        self.agents = list(np.random.permutation(self.possible_agents[:]))
+        first_agent = np.random.choice(self.possible_agents[:], 1)
+        first_index = self.possible_agents.index(first_agent)
+        self.agents = self.possible_agents[first_index:]
+        self.agents.extend(self.possible_agents[:first_index])
         self.rewards = {agent: 0 for agent in self.agents}
         self._cumulative_rewards = {agent: 0 for agent in self.agents}
         self.dones = {agent: False for agent in self.agents}
