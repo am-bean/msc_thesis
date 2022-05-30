@@ -1,8 +1,15 @@
 # Import the pygame module
+from time import sleep
+
 import pygame
+
+import ray
+import best_checkpoints
+from card_game_files.load_pretrained_player import load_pretrained_player
 from pygame_render_helpers import show_title, show_scores, show_curec
 from pygame_constants import *
-from Card import Card
+from Card import Card, parse_string_to_card, decode_card
+from Player import Player
 
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
@@ -20,43 +27,13 @@ from pygame.locals import (
 
 if __name__ == '__main__':
 
-
-    # Define a player to hold info about displaying each player
-    class Player:
-        def __init__(self, name, hand_x, hand_y, played_x, played_y, is_vertical=False):
-            self.name = name
-            self.hand_x = hand_x
-            self.hand_y = hand_y
-            self.played_x = played_x
-            self.played_y = played_y
-            self.hand_cards = []
-            self.hand_sprites = pygame.sprite.Group()
-            self.is_vertical = is_vertical
-            self.played_sprites = pygame.sprite.Group()
-
-
-        def add_cards(self, sprites):
-            for card in sprites:
-                self.hand_sprites.add(card)
-
-        def hide_cards(self):
-            for card in self.hand_sprites:
-                card.update_card(False)
-
-        def show_cards(self):
-            for card in self.hand_sprites:
-                card.update_card(True)
-
-        def play_card(self, card):
-            self.played_sprites.add(card)
-            self.hand_sprites.remove(card)
-            card.update_card(True)
-
-
-
-
     # Initialize pygame
     pygame.init()
+
+    # Initialize pretrained model
+    checkpoint = best_checkpoints.best_checkpoints()['first_round']
+    my_env, trainer = load_pretrained_player(checkpoint)
+    obs = my_env.reset()
 
     # Create the screen object
     # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
@@ -73,23 +50,34 @@ if __name__ == '__main__':
                               screen_rect.centerx - CARD_WIDTH * 1.2, screen_rect.centery, True)
                }
 
-    # Instantiate a card
-    players['south'].hand_cards = [Card('spades', 'ace'), Card('hearts', 'jack'), Card('spades', 'king')]
-    players['north'].hand_cards = [Card('spades', '10'), Card('spades', '5'), Card('spades', '4')]
-    players['east'].hand_cards = [Card('spades', '9'), Card('diamonds', '5'), Card('diamonds', '10')]
-    players['west'].hand_cards = [Card('spades', 'queen'), Card('clubs', '5'), Card('clubs', '4')]
+    hands = my_env.get_sub_environments.hands
+    player_agent_mapping = {'player_0': 'south', 'player_1': 'west', 'player_2': 'north', 'player_3': 'east'}
+    # Create hands from observations
+    for agent, player in player_agent_mapping.items():
+        players[player].hand_cards = [parse_string_to_card(string, True) for string in hands[agent]]
 
     for key, player in players.items():
         player.add_cards(player.hand_cards)
         if key != 'south':
             player.hide_cards()
-            player.play_card(player.hand_cards[0])
 
     # Variable to keep the main loop running
     running = True
+    action_ready = False
 
     # Main loop
     while running:
+
+        current_agent = list(obs.keys())[0]
+        current_player = player_agent_mapping[current_agent]
+
+        if current_player != 'south' and not action_ready:
+            sleep(2)
+            action = trainer.compute_single_action(obs[current_agent], policy_id='player_0', explore=False)
+            r, s = decode_card(action)
+            selected_card = [card for card in players[current_player].hand_cards if card.suit == s and card.rank == r][0]
+            action_ready = True
+
         # for loop through the event queue
         for event in pygame.event.get():
             # Check for KEYDOWN event
@@ -100,6 +88,21 @@ if __name__ == '__main__':
             # Check for QUIT event. If QUIT, then set running to false.
             elif event.type == QUIT:
                 running = False
+            elif event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                clicked_sprites = [s for s in players['south'].hand_sprites if s.rect.collidepoint(pos)]
+                # The cards are rendered left to right, so the last one in the list will be on top
+                if clicked_sprites:
+                    selected_card = clicked_sprites[-1]
+                    action = selected_card.card_to_index()
+                    action_ready = True
+
+        if action_ready:
+            action_ready = False
+            action_dict = {current_agent: action}
+            players[current_player].play_card(selected_card)
+            obs, reward, dones, info = my_env.step(action_dict)
+            running = not dones['__all__']
 
         scores = {'E/W': 1, 'N/S': 1}
 
@@ -140,3 +143,6 @@ if __name__ == '__main__':
 
         # Update the display
         pygame.display.flip()
+
+    # Clean up once the game is over
+    ray.shutdown()

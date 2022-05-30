@@ -50,7 +50,7 @@ class raw_env(AECEnv):
     The "name" metadata allows the environment to be pretty printed.
     """
 
-    metadata = {"render_modes": ["human"], "name": "rps_v2"}
+    metadata = {"render_modes": ["human"], "name": "cards"}
 
     def __init__(self):
         """
