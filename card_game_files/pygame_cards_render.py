@@ -55,15 +55,20 @@ if __name__ == '__main__':
     # Create hands from observations
     for agent, player in player_agent_mapping.items():
         players[player].hand_cards = [parse_string_to_card(string, True) for string in hands[agent]]
+        players[player].hand_cards.sort(key=lambda card: card.card_to_index())
 
     for key, player in players.items():
         player.add_cards(player.hand_cards)
         if key != 'south':
             player.hide_cards()
 
+    tricks = my_env.get_sub_environments.tricks_taken
+    scores = {'E/W': tricks['player_1'], 'N/S': tricks['player_0']}
+
     # Variable to keep the main loop running
     running = True
     action_ready = False
+    clear_table = False
 
     # Main loop
     while running:
@@ -72,7 +77,7 @@ if __name__ == '__main__':
         current_player = player_agent_mapping[current_agent]
 
         if current_player != 'south' and not action_ready:
-            sleep(2)
+            sleep(1)
             action = trainer.compute_single_action(obs[current_agent], policy_id='player_0', explore=False)
             r, s = decode_card(action)
             selected_card = [card for card in players[current_player].hand_cards if card.suit == s and card.rank == r][0]
@@ -93,9 +98,16 @@ if __name__ == '__main__':
                 clicked_sprites = [s for s in players['south'].hand_sprites if s.rect.collidepoint(pos)]
                 # The cards are rendered left to right, so the last one in the list will be on top
                 if clicked_sprites:
+                    # Need to deal with illegal actions
                     selected_card = clicked_sprites[-1]
                     action = selected_card.card_to_index()
                     action_ready = True
+
+        if clear_table:
+            sleep(3)
+            clear_table = False
+            for player in players.values():
+                player.played_sprites.empty()
 
         if action_ready:
             action_ready = False
@@ -103,8 +115,11 @@ if __name__ == '__main__':
             players[current_player].play_card(selected_card)
             obs, reward, dones, info = my_env.step(action_dict)
             running = not dones['__all__']
-
-        scores = {'E/W': 1, 'N/S': 1}
+            tricks = my_env.get_sub_environments.tricks_taken
+            scores = {'E/W': tricks['player_1'], 'N/S': tricks['player_0']}
+            table = my_env.get_sub_environments.cards_played
+            if table == {'player_0': '', 'player_1': '', 'player_2': '', 'player_3': ''}:
+                clear_table = True
 
         # Fill the screen with green
         screen.fill((0, 51, 8))
