@@ -6,7 +6,7 @@ import pygame
 import ray
 import best_checkpoints
 from card_game_files.load_pretrained_player import load_pretrained_player
-from pygame_render_helpers import show_title, show_scores, show_curec
+from pygame_render_helpers import show_title, show_scores, show_curec, draw_arrow
 from pygame_constants import *
 from Card import Card, parse_string_to_card, decode_card
 from Player import Player
@@ -76,6 +76,9 @@ if __name__ == '__main__':
         current_agent = list(obs.keys())[0]
         current_player = player_agent_mapping[current_agent]
 
+        # Fill the screen with green
+        screen.fill((0, 51, 8))
+
         if current_player != 'south' and not action_ready:
             sleep(1)
             action = trainer.compute_single_action(obs[current_agent], policy_id='player_0', explore=False)
@@ -99,12 +102,14 @@ if __name__ == '__main__':
                 # The cards are rendered left to right, so the last one in the list will be on top
                 if clicked_sprites:
                     # Need to deal with illegal actions
+                    action_mask = obs[current_agent]['action_mask']
                     selected_card = clicked_sprites[-1]
                     action = selected_card.card_to_index()
-                    action_ready = True
+                    if action_mask[action] == 1:
+                        action_ready = True
 
         if clear_table:
-            sleep(3)
+            sleep(2)
             clear_table = False
             for player in players.values():
                 player.played_sprites.empty()
@@ -121,12 +126,6 @@ if __name__ == '__main__':
             if table == {'player_0': '', 'player_1': '', 'player_2': '', 'player_3': ''}:
                 clear_table = True
 
-        # Fill the screen with green
-        screen.fill((0, 51, 8))
-
-        show_curec(screen, screen_rect)
-        show_title(screen, screen_rect)
-        show_scores(screen, screen_rect, scores)
 
         for player in players.values():
             # Draw cards in hand
@@ -155,6 +154,15 @@ if __name__ == '__main__':
                     card.rect.centerx = player.played_x
                     card.rect.centery = player.played_y
                     screen.blit(card.surf, card.rect)
+
+
+        current_agent = list(obs.keys())[0]
+        current_player = player_agent_mapping[current_agent]
+
+        show_curec(screen, screen_rect)
+        show_title(screen, screen_rect)
+        show_scores(screen, screen_rect, scores)
+        draw_arrow(screen, screen_rect, current_player)
 
         # Update the display
         pygame.display.flip()

@@ -63,3 +63,23 @@ def show_title(screen, screen_rect):
     screen.blit(instruc, instruc_rect)
     screen.blit(instruc2, instruc2_rect)
     screen.blit(instruc3, instruc3_rect)
+
+
+def draw_arrow(screen, screen_rect, direction):
+    if direction == 'south':
+        tri_base_left = (screen_rect.centerx - CARD_WIDTH / 4, screen_rect.centery - CARD_WIDTH / (4 * 1.7))
+        tri_base_right = (screen_rect.centerx + CARD_WIDTH / 4, screen_rect.centery - CARD_WIDTH / (4 * 1.7))
+        tri_point = (screen_rect.centerx, screen_rect.centery + CARD_WIDTH / 4)
+    elif direction == 'north':
+        tri_base_left = (screen_rect.centerx - CARD_WIDTH / 4, screen_rect.centery + CARD_WIDTH / (4 * 1.7))
+        tri_base_right = (screen_rect.centerx + CARD_WIDTH / 4, screen_rect.centery + CARD_WIDTH / (4 * 1.7))
+        tri_point = (screen_rect.centerx, screen_rect.centery - CARD_WIDTH / 4)
+    elif direction == 'east':
+        tri_base_left = (screen_rect.centerx - CARD_WIDTH / (4 * 1.7), screen_rect.centery + CARD_WIDTH / 4)
+        tri_base_right = (screen_rect.centerx - CARD_WIDTH / (4 * 1.7), screen_rect.centery - CARD_WIDTH / 4)
+        tri_point = (screen_rect.centerx + CARD_WIDTH / 4, screen_rect.centery)
+    else:
+        tri_base_left = (screen_rect.centerx + CARD_WIDTH / (4 * 1.7), screen_rect.centery + CARD_WIDTH / 4)
+        tri_base_right = (screen_rect.centerx + CARD_WIDTH / (4 * 1.7), screen_rect.centery - CARD_WIDTH / 4)
+        tri_point = (screen_rect.centerx - CARD_WIDTH / 4, screen_rect.centery)
+    pygame.draw.polygon(surface=screen, color=BLUE, points=[tri_base_left, tri_base_right, tri_point])
