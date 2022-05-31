@@ -37,10 +37,10 @@ if __name__ == "__main__":
 
     # Setup DQN with an ensemble of `num_policies` different policies.
 
-    old_config = default_config()
+    first_config = default_config()
 
-    old_config["env"] = "cards"
-    old_config["multiagent"] = {
+    first_config["env"] = "cards"
+    first_config["multiagent"] = {
         "policies": {
             "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
             "player_1": (MaskedRandomPolicy, obs_space, act_space, {}),
@@ -52,10 +52,11 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    best_checkpoint = best_checkpoints()['first_round']
+    first_checkpoint = best_checkpoints()['first_round']
+    second_checkpoint = best_checkpoints()['untrained']
 
-    new_config = deepcopy(old_config)
-    new_config["multiagent"] = {
+    second_config = deepcopy(first_config)
+    second_config["multiagent"] = {
         "policies": {
             "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
             "player_1": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
@@ -67,29 +68,35 @@ if __name__ == "__main__":
     }
 
     # Create a dummy Trainer to load our checkpoint.
-    dummy_trainer = DQNTrainer(config=old_config)
-    new_trainer = DQNTrainer(config=new_config)
-    # Get untrained weights for all policies.
-    untrained_weights = new_trainer.get_weights()
+    first_dummy_trainer = DQNTrainer(config=first_config)
+    second_dummy_trainer = DQNTrainer(config=first_config)
+    new_trainer = DQNTrainer(config=second_config)
     # Restore all policies from checkpoint.
-    dummy_trainer.restore(best_checkpoint)
+    first_dummy_trainer.restore(first_checkpoint)
+    second_dummy_trainer.restore(second_checkpoint)
     # Get trained weights
-    trained_weights = dummy_trainer.get_weights()
+    first_trained_weights = first_dummy_trainer.get_weights()
+    second_trained_weights = first_dummy_trainer.get_weights()
     # Set all the weights to the trained agent weights
-    new_trainer.set_weights({pid: trained_weights['player_0'] for pid, _ in untrained_weights.items()})
+    use_first_trained = ['player_0', 'player_2']
+    use_second_trained = ['player_1', 'player_3']
+    new_trainer.set_weights({pid: first_trained_weights['player_0'] for pid in use_first_trained})
+    new_trainer.set_weights({pid: second_trained_weights['player_0'] for pid in use_second_trained})
 
-    # run until episode ends
-    episode_reward = 0
-    done = False
-    obs = my_env.reset()
-    my_env.render()
-    while not done:
-        agent = list(obs.keys())[0]
-        action = dummy_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
-        action_dict = {agent: action}
-        obs, reward, dones, info = my_env.step(action_dict)
-        my_env.render()
-        done = dones['__all__']
-        #episode_reward += reward
+    cum_rewards = {'player_0': 0, 'player_1': 0, 'player_2': 0, 'player_3': 0}
+    for i in range(200):
+        # run until episode ends
+        done = False
+        my_env.seed(i)
+        obs = my_env.reset()
+        while not done:
+            agent = list(obs.keys())[0]
+            action = new_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
+            action_dict = {agent: action}
+            obs, reward, dones, info = my_env.step(action_dict)
+            done = dones['__all__']
+        for player, reward in reward.items():
+            cum_rewards[player] += reward
+        print(cum_rewards)
 
     ray.shutdown()

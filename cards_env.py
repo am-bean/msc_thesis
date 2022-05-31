@@ -62,6 +62,7 @@ class raw_env(AECEnv):
 
         These attributes should not be changed after initialization.
         """
+        self.state_seed = None
         self.possible_agents = ["player_" + str(r) for r in range(N_AGENTS)]
         self.partners = {"player_" + str(int(r + N_AGENTS / 2) % N_AGENTS): "player_" + str(r) for r in range(N_AGENTS)}
         self.agent_name_mapping = dict(
@@ -123,7 +124,10 @@ class raw_env(AECEnv):
         """
         pass
 
-    def reset(self, seed=None):
+    def seed(self, state_seed):
+        self.state_seed = state_seed
+
+    def reset(self, state_seed=None):
         """
         Reset needs to initialize the following attributes
         - agents
@@ -137,9 +141,16 @@ class raw_env(AECEnv):
 
         Here it sets up the state dictionary which is used by step() and the observations dictionary which is used by step() and observe()
         """
-        np.random.seed(seed)
-        first_agent = np.random.choice(self.possible_agents[:], 1)
-        first_index = self.possible_agents.index(first_agent)
+        # Use the same seed for sets of four seats, but rotate who goes first
+        if state_seed:
+            self.state_seed = state_seed
+            np.random.seed(self.state_seed - self.state_seed % 4)
+            first_index = self.state_seed % 4
+        elif self.state_seed:
+            np.random.seed(self.state_seed - self.state_seed % 4)
+            first_index = self.state_seed % 4
+        else:
+            first_index = np.random.choice([0, 1, 2, 3], 1)[0]
         self.agents = self.possible_agents[first_index:]
         self.agents.extend(self.possible_agents[:first_index])
         self.rewards = {agent: 0 for agent in self.agents}
