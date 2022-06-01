@@ -13,8 +13,8 @@ from ray.rllib.utils.framework import try_import_torch
 
 import cards_env
 from best_checkpoints import best_checkpoints
-from custom_env_test import MaskedRandomPolicy
-from custom_env_test import TorchMaskedActions
+from train_with_random_agents import MaskedRandomPolicy
+from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
@@ -52,8 +52,8 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    first_checkpoint = best_checkpoints()['first_round']
-    second_checkpoint = best_checkpoints()['untrained']
+    first_checkpoint = best_checkpoints()['third_round']
+    second_checkpoint = best_checkpoints()['second_round']
 
     second_config = deepcopy(first_config)
     second_config["multiagent"] = {
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     new_trainer.set_weights({pid: second_trained_weights['player_0'] for pid in use_second_trained})
 
     cum_rewards = {'player_0': 0, 'player_1': 0, 'player_2': 0, 'player_3': 0}
-    for i in range(200):
+    for i in range(10000):
         # run until episode ends
         done = False
         my_env.seed(i)
@@ -97,6 +97,7 @@ if __name__ == "__main__":
             done = dones['__all__']
         for player, reward in reward.items():
             cum_rewards[player] += reward
-        print(cum_rewards)
+        if i%1000 == 999:
+            print(cum_rewards)
 
     ray.shutdown()

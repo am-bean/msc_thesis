@@ -23,8 +23,8 @@ from ray.rllib.agents.registry import get_agent_class
 
 import cards_env
 from best_checkpoints import best_checkpoints
-from custom_env_test import MaskedRandomPolicy
-from custom_env_test import TorchMaskedActions
+from train_with_random_agents import MaskedRandomPolicy
+from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()

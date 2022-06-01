@@ -1,6 +1,7 @@
-"""Loads a pre-trained agent to play a demo game
+"""Loads a previously trained set of agents and then continues to train one of them.
 """
 
+import argparse
 from copy import deepcopy
 
 import ray
@@ -10,6 +11,7 @@ from ray.rllib.env import PettingZooEnv
 from ray.rllib.models import ModelCatalog
 from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
+from ray.rllib.agents.registry import get_agent_class
 
 import cards_env
 from best_checkpoints import best_checkpoints
@@ -19,7 +21,13 @@ from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--stop-timesteps", type=int, default=10000000)
+parser.add_argument("--num-cpus", type=int, default=2)
+
 if __name__ == "__main__":
+    args = parser.parse_args()
 
     ray.init(num_cpus=4)
 
@@ -27,6 +35,7 @@ if __name__ == "__main__":
     def env_creator():
         env = cards_env.env()
         return env
+
 
     ModelCatalog.register_custom_model("masked_dqn", TorchMaskedActions)
     register_env("cards", lambda config: PettingZooEnv(env_creator()))
@@ -51,8 +60,8 @@ if __name__ == "__main__":
         "policies_to_train": ["player_0"],
     }
 
-    # Load the checkpoint.
-    best_checkpoint = best_checkpoints()['first_round']
+
+    best_checkpoint = best_checkpoints()['second_round']
 
     new_config = deepcopy(old_config)
     new_config["multiagent"] = {
@@ -77,19 +86,16 @@ if __name__ == "__main__":
     trained_weights = dummy_trainer.get_weights()
     # Set all the weights to the trained agent weights
     new_trainer.set_weights({pid: trained_weights['player_0'] for pid, _ in untrained_weights.items()})
+    # Create the checkpoint from which tune can pick up the
+    # experiment.
+    new_checkpoint = new_trainer.save()
 
-    # run until episode ends
-    episode_reward = 0
-    done = False
-    obs = my_env.reset()
-    my_env.render()
-    while not done:
-        agent = list(obs.keys())[0]
-        action = dummy_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
-        action_dict = {agent: action}
-        obs, reward, dones, info = my_env.step(action_dict)
-        my_env.render()
-        done = dones['__all__']
-        #episode_reward += reward
+    results = tune.run(
+        "DQN",
+        stop={"timesteps_total": args.stop_timesteps},
+        config=new_config,
+        checkpoint_freq=1000,
+        verbose=1
+    )
 
     ray.shutdown()

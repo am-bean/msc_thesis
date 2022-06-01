@@ -9,8 +9,8 @@ from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
 
 import cards_env
-from custom_env_test import MaskedRandomPolicy
-from custom_env_test import TorchMaskedActions
+from train_with_random_agents import MaskedRandomPolicy
+from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
