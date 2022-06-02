@@ -206,6 +206,12 @@ class raw_env(AECEnv):
             # handles stepping an agent which is already done
             # accepts a None action for the one agent, and moves the agent_selection to
             # the next done agent,  or if there are no more done agents, to the next live agent
+            # Updates the results of the trick
+            if self._agent_selector.is_last():
+                winning_agent = self.__choose_winner()
+                # Increments the winner's tricks taken
+                self.tricks_taken[winning_agent] += 1
+                self.tricks_taken[self.partners[winning_agent]] += 1
             return self._was_done_step(None)
 
         one_hot_action = NONE.copy()
