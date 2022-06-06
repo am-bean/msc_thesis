@@ -27,6 +27,9 @@ parser.add_argument("--stop-timesteps", type=int, default=10000000)
 parser.add_argument("--num-cpus", type=int, default=2)
 
 if __name__ == "__main__":
+
+    best_checkpoint = best_checkpoints()['2_1']
+
     args = parser.parse_args()
 
     ray.init(num_cpus=4)
@@ -59,9 +62,6 @@ if __name__ == "__main__":
         "policy_mapping_fn": lambda agent_id: agent_id,
         "policies_to_train": ["player_0"],
     }
-
-
-    best_checkpoint = best_checkpoints()['second_round']
 
     new_config = deepcopy(old_config)
     new_config["multiagent"] = {
@@ -97,5 +97,8 @@ if __name__ == "__main__":
         checkpoint_freq=1000,
         verbose=1
     )
+
+
+    print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
 
     ray.shutdown()

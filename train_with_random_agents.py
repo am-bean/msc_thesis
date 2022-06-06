@@ -53,7 +53,11 @@ if __name__ == "__main__":
     ray.init(num_cpus=num_cpus)
 
     results = tune.run('DQN',
-             stop={"timesteps_total": 1000000},
+             stop={"timesteps_total": 150000},
              checkpoint_freq=1000,
              config=config,
              )
+
+    print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
+
+    ray.shutdown()

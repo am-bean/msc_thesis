@@ -156,6 +156,7 @@ class raw_env(AECEnv):
         self.rewards = {agent: 0 for agent in self.agents}
         self._cumulative_rewards = {agent: 0 for agent in self.agents}
         self.dones = {agent: False for agent in self.agents}
+        self.illegal_move = False
 
         self.hands = {agent: {} for agent in self.agents}
         self.private_info = {agent: [] for agent in self.agents}
@@ -202,21 +203,24 @@ class raw_env(AECEnv):
         And any internal state used by observe() or render()
         """
 
+
+        one_hot_action = NONE.copy()
+        one_hot_action[0, action] = 1
+        agent = self.agent_selection
+
         if self.dones[self.agent_selection]:
             # handles stepping an agent which is already done
             # accepts a None action for the one agent, and moves the agent_selection to
             # the next done agent,  or if there are no more done agents, to the next live agent
             # Updates the results of the trick
-            if self._agent_selector.is_last():
+            if self._agent_selector.is_last() and not self.illegal_move:
                 winning_agent = self.__choose_winner()
                 # Increments the winner's tricks taken
                 self.tricks_taken[winning_agent] += 1
                 self.tricks_taken[self.partners[winning_agent]] += 1
+                self._accumulate_rewards()
             return self._was_done_step(None)
 
-        one_hot_action = NONE.copy()
-        one_hot_action[0, action] = 1
-        agent = self.agent_selection
 
         # Check for valid moves
         if (sum(self.action_masks[agent]) == 0) and not self.dones[agent]:
@@ -234,6 +238,7 @@ class raw_env(AECEnv):
                 self.rewards[i] = self.tricks_taken[i] + self.current_round/10
             self.rewards[agent] = -10 + self.current_round
             self._accumulate_rewards()
+            self.illegal_move = True
             return
 
             # the agent which stepped last had its _cumulative_rewards accounted for
