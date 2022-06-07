@@ -23,12 +23,12 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-timesteps", type=int, default=10000000)
+parser.add_argument("--stop-timesteps", type=int, default=300000)
 parser.add_argument("--num-cpus", type=int, default=2)
 
 if __name__ == "__main__":
 
-    best_checkpoint = best_checkpoints()['2_1']
+    best_checkpoint = best_checkpoints()['3_1']
 
     args = parser.parse_args()
 
@@ -95,6 +95,8 @@ if __name__ == "__main__":
         stop={"timesteps_total": args.stop_timesteps},
         config=new_config,
         checkpoint_freq=1000,
+        reuse_actors=True,
+        max_concurrent_trials=1000,
         verbose=1
     )
 

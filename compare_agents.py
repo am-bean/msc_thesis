@@ -52,8 +52,8 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    first_checkpoint = best_checkpoints()['third_round']
-    second_checkpoint = best_checkpoints()['second_round']
+    first_checkpoint = best_checkpoints()['3_2']
+    second_checkpoint = best_checkpoints()['0_0']
 
     second_config = deepcopy(first_config)
     second_config["multiagent"] = {

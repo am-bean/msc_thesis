@@ -98,11 +98,11 @@ def default_config():
 
     config["exploration_config"] = {
         # The Exploration class to use.
-        "type": "EpsilonGreedy",
+        "type": "StochasticSampling", #EpsilonGreedy
         # Config for the Exploration class' constructor:
-        "initial_epsilon": 0.1,
-        "final_epsilon": 0.0,
-        "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
+        #"initial_epsilon": 0.1,
+        #"final_epsilon": 0.0,
+        #"epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
     }
     config["hiddens"] = []
     config["dueling"] = False
