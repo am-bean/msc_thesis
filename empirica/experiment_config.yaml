@@ -1,0 +1,276 @@
+treatments:
+  - name: feedback_solo
+    factorIds:
+      - x8NsYrN2aEXJ9ns8k
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - FccqQDekPjChDLavW
+      - KJ8CtbQL6BNDAZ62g
+      - keQKFg25HMJvd3BTv
+  - name: feedback_no_inter
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - uimy8Qk7rRFkgdcx5
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - 8GmjZDHGTdzgTSawA
+      - 2zkyc3vkB5t4umaR7
+      - KJ8CtbQL6BNDAZ62g
+      - f5fGukRQPPhjnR2cP
+      - CMjBmGxwwKfyhaPL7
+      - pgPLJvJ8nL2sByxCf
+      - icJAxM2jCSRk6GhHN
+  - name: feedback_global
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - GbiyWT2nipp7BNvak
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - 8GmjZDHGTdzgTSawA
+      - 2zkyc3vkB5t4umaR7
+      - KJ8CtbQL6BNDAZ62g
+      - f5fGukRQPPhjnR2cP
+      - CMjBmGxwwKfyhaPL7
+      - pgPLJvJ8nL2sByxCf
+      - icJAxM2jCSRk6GhHN
+  - name: feedback_local
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - bfkBvo32jL2b55Ywo
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - 8GmjZDHGTdzgTSawA
+      - 2zkyc3vkB5t4umaR7
+      - KJ8CtbQL6BNDAZ62g
+      - f5fGukRQPPhjnR2cP
+      - CMjBmGxwwKfyhaPL7
+      - pgPLJvJ8nL2sByxCf
+      - icJAxM2jCSRk6GhHN
+  - name: no_feedback_solo
+    factorIds:
+      - x8NsYrN2aEXJ9ns8k
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - FccqQDekPjChDLavW
+      - WzRm62xNo5xzCamke
+      - keQKFg25HMJvd3BTv
+  - name: no_feedback_no_inter
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - uimy8Qk7rRFkgdcx5
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - 8GmjZDHGTdzgTSawA
+      - 2zkyc3vkB5t4umaR7
+      - WzRm62xNo5xzCamke
+      - ZPZPZbWfgBP7JhmG2
+      - CMjBmGxwwKfyhaPL7
+      - pgPLJvJ8nL2sByxCf
+      - icJAxM2jCSRk6GhHN
+  - name: no_feedback_global
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - GbiyWT2nipp7BNvak
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - 8GmjZDHGTdzgTSawA
+      - 2zkyc3vkB5t4umaR7
+      - WzRm62xNo5xzCamke
+      - ZPZPZbWfgBP7JhmG2
+      - CMjBmGxwwKfyhaPL7
+      - pgPLJvJ8nL2sByxCf
+      - icJAxM2jCSRk6GhHN
+  - name: no_feedback_local
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - bfkBvo32jL2b55Ywo
+      - hYAN6QtMWrafbNwXH
+      - WxmdRvjuc2rBaw3K2
+      - 8GmjZDHGTdzgTSawA
+      - 2zkyc3vkB5t4umaR7
+      - WzRm62xNo5xzCamke
+      - ZPZPZbWfgBP7JhmG2
+      - CMjBmGxwwKfyhaPL7
+      - pgPLJvJ8nL2sByxCf
+      - icJAxM2jCSRk6GhHN
+factorTypes:
+  - _id: k4p6HLcMrSkTrXuYi
+    name: playerCount
+    description: The Number of players participating in the given game.
+    required: true
+    type: Integer
+    min: 1
+  - _id: Nooz2W7GnyGFZWgTB
+    name: interpretationType
+    description: Interpretation provided for AI
+    required: false
+    type: String
+  - _id: ZRZ6Cj3NziZauB3bA
+    name: roundCount
+    description: Number of rounds played
+    required: true
+    type: Integer
+    min: 1
+    max: 100
+  - _id: Jroupzjefq85xtNGj
+    name: stageLength
+    description: Number of seconds in stage
+    required: true
+    type: Integer
+    min: 1
+    max: 12000
+  - _id: KfyLA4vySCuJ8RYAX
+    name: socialStageLength
+    description: Number of seconds in social stage
+    required: false
+    type: Integer
+    min: 1
+    max: 12000
+  - _id: 4q2RSFfsrB3oFRTu6
+    name: botsCount
+    description: Number of bots
+    required: true
+    type: Integer
+    min: 0
+    max: 100
+  - _id: zmLFe9T5uH7cAGo4n
+    name: giveFeedback
+    description: Show score to users.
+    required: true
+    type: Boolean
+  - _id: Mmk6EszYubTmuPbNc
+    name: otherPlayerFeedback
+    description: Show feedback on other player's score
+    required: false
+    type: Boolean
+  - _id: bQ28KcJTHzCT8WmPJ
+    name: revealBots
+    description: Show that other player is a bot
+    required: false
+    type: Boolean
+  - _id: TTskujkQiE8PDtojt
+    name: interactiveBot
+    description: Make the bot respond interactively to player changes
+    required: false
+    type: Boolean
+  - _id: f2HeLyxPn6ijG7BWh
+    name: conversionRate
+    description: converting the game points into real money
+    required: true
+    type: Number
+    min: 0
+factors:
+  - _id: KJ8CtbQL6BNDAZ62g
+    name: "true"
+    value: true
+    factorTypeId: zmLFe9T5uH7cAGo4n
+  - _id: WzRm62xNo5xzCamke
+    name: "false"
+    value: false
+    factorTypeId: zmLFe9T5uH7cAGo4n
+  - _id: f5fGukRQPPhjnR2cP
+    name: "true"
+    value: true
+    factorTypeId: Mmk6EszYubTmuPbNc
+  - _id: ZPZPZbWfgBP7JhmG2
+    name: "false"
+    value: false
+    factorTypeId: Mmk6EszYubTmuPbNc
+  - _id: CMjBmGxwwKfyhaPL7
+    name: "true"
+    value: true
+    factorTypeId: bQ28KcJTHzCT8WmPJ
+  - _id: udjQtNZTqwCo6uNSm
+    name: "false"
+    value: false
+    factorTypeId: bQ28KcJTHzCT8WmPJ
+  - _id: agfiz5xS4X4oQGb5c
+    name: "true"
+    value: true
+    factorTypeId: TTskujkQiE8PDtojt
+  - _id: pgPLJvJ8nL2sByxCf
+    name: "false"
+    value: false
+    factorTypeId: TTskujkQiE8PDtojt
+  - _id: uimy8Qk7rRFkgdcx5
+    name: none
+    value: None
+    factorTypeId: Nooz2W7GnyGFZWgTB
+  - _id: bfkBvo32jL2b55Ywo
+    name: local
+    value: Local
+    factorTypeId: Nooz2W7GnyGFZWgTB
+  - _id: GbiyWT2nipp7BNvak
+    name: global
+    value: Global
+    factorTypeId: Nooz2W7GnyGFZWgTB
+  - _id: x8NsYrN2aEXJ9ns8k
+    name: one
+    value: 1
+    factorTypeId: k4p6HLcMrSkTrXuYi
+  - _id: fXPTZpBnxsxuotxh6
+    name: two
+    value: 2
+    factorTypeId: k4p6HLcMrSkTrXuYi
+  - _id: stSByaLq2axRCzySD
+    name: one
+    value: 1
+    factorTypeId: ZRZ6Cj3NziZauB3bA
+  - _id: no4NocAjd3Ny7cpxX
+    name: three
+    value: 3
+    factorTypeId: ZRZ6Cj3NziZauB3bA
+  - _id: WxmdRvjuc2rBaw3K2
+    name: short
+    value: 60
+    factorTypeId: Jroupzjefq85xtNGj
+  - _id: Q7bKTC87PQNjfNfmn
+    name: normal
+    value: 120
+    factorTypeId: Jroupzjefq85xtNGj
+  - _id: sCsrr2mz5qdeCGS4T
+    name: long
+    value: 12000
+    factorTypeId: Jroupzjefq85xtNGj
+  - _id: 8GmjZDHGTdzgTSawA
+    name: short
+    value: 60
+    factorTypeId: KfyLA4vySCuJ8RYAX
+  - _id: pKR6aPvBL5wyDBjbZ
+    name: normal
+    value: 120
+    factorTypeId: KfyLA4vySCuJ8RYAX
+  - _id: CJQ74eCpLbH4m8yMK
+    name: long
+    value: 12000
+    factorTypeId: KfyLA4vySCuJ8RYAX
+  - _id: 2zkyc3vkB5t4umaR7
+    name: one
+    value: 1
+    factorTypeId: 4q2RSFfsrB3oFRTu6
+  - _id: FccqQDekPjChDLavW
+    name: zero
+    value: 0
+    factorTypeId: 4q2RSFfsrB3oFRTu6
+  - _id: icJAxM2jCSRk6GhHN
+    name: "0.45"
+    value: 0.45
+    factorTypeId: f2HeLyxPn6ijG7BWh
+  - _id: hYAN6QtMWrafbNwXH
+    name: ten
+    value: 10
+    factorTypeId: ZRZ6Cj3NziZauB3bA
+  - _id: keQKFg25HMJvd3BTv
+    name: "0.2"
+    value: 0.2
+    factorTypeId: f2HeLyxPn6ijG7BWh
+  - _id: Hn79NgmEYyCwuTzDJ
+    name: "0.4"
+    value: 0.4
+    factorTypeId: f2HeLyxPn6ijG7BWh
+lobbyConfigs:
+  - name: long
+    timeoutType: lobby
+    timeoutInSeconds: 12000
+    timeoutStrategy: fail
+    gameLobbyIds: []

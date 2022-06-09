@@ -1,0 +1,212 @@
+/** 
+  * Split the less to reduce conflict while dev
+  * This file will merge into main.less 
+*/
+/** Couples person style */
+
+.cards {
+  max-width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+
+  background-color: #ffffff;
+  //border: 1px solid #6e7cfb;
+  box-sizing: border-box;
+  border-radius: 5px;
+  overflow: hidden;
+
+  display: flex;
+  flex-wrap: nowrap;
+
+  .card-thumb {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    
+    img {
+      max-width: 100%;
+    }
+  }
+}
+
+
+.response {
+  background-color: #fafafc;
+  padding: 30px;
+  border-radius: 0 0 1rem 1rem;
+  & > h3 {
+    font-weight: bold;
+    font-size: 17px;
+    line-height: 20px;
+    margin: 0 0 40px;
+  }
+  .cards-in-hand{
+    display: grid;
+    grid-template-columns: repeat(6, 18%);
+    grid-column-gap: 10px;
+    padding: 30px 20px;
+    height: 250px;
+
+    .card-button {
+      padding: 0px 0px;
+      width: 100%;
+
+      box-sizing: border-box;
+      font-weight: bold;
+      font-size: 17px;
+      line-height: 20px;
+      transition: opacity 300ms;
+      color: #677380;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.85;
+      }
+
+      &[disabled],
+      :disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.prediction {
+  position: absolute;
+  height: 107px;
+  font-size: 12px;
+  line-height: 14px;
+  color: #2e5882;
+  top: 2px;
+  z-index: 5;
+
+  .prediction-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
+    width: 1px;
+
+    .prediction-point {
+      flex: 0 0 11px;
+      min-width: 11px;
+      height: 11px;
+      border-radius: 100%;
+      background-color: #a9dbff;
+    }
+    .prediction-line {
+      width: 1px;
+      height: 82px;
+      background-color: #a9dbff;
+    }
+    .prediction-box {
+      border-radius: 50%;
+      text-align: center;
+      padding: 4px 6px;
+      background-color: #a9dbff;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+  }
+  &.user {
+    /* Auto Layout */
+    z-index: 6;
+    color: #505962;
+
+    .prediction-line {
+      height: 53px;
+      background-color: #a7b0ba;
+    }
+    .prediction-point {
+      background-color: #a7b0ba;
+    }
+    .prediction-box {
+      background-color: #eff0f3;
+    }
+  }
+
+  &.new-prediction {
+    color: #505962;
+    top: -55px;
+    .prediction-line {
+      height: 35px;
+      background-color: #a7b0ba;
+    }
+    .prediction-point {
+      background-color: #a7b0ba;
+    }
+    .prediction-box {
+      background: linear-gradient(180deg, #f6f8fb 0%, #e0e2e4 100%);
+      border: 1px solid #d3dae0;
+    }
+  }
+}
+.result {
+  margin: 30px 0;
+  .alert {
+    background: #FFCE95;
+    border: 1px solid #FF7724;
+    border-radius: 4px;
+    font-size: 17px;
+    line-height: 20px;
+    text-align: center;
+    color: #FF7724;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 30px;
+
+    .alert-content {
+      padding: 20px;
+    }
+
+    &.alert-error {
+      background: #AADAD1;
+      border: 1px solid #048B8F;
+      color: #048B8F;
+    }
+  }
+
+  .result-score {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #a7b0ba;
+    border-radius: 10px;
+    height: 85px;
+    width: 100%;
+
+    .result-item {
+      display: flex;
+      height: 100%;
+      border-right: 1px solid #a7b0ba;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-wrap: wrap;
+
+      &.last-item,
+      &:last-child {
+        border-right: 0;
+      }
+
+      .result-entry {
+        flex: 0 0 100%;
+        min-width: 100%;
+        color: #000000;
+        font-size: 24px;
+        line-height: 29px;
+        font-weight: 600;
+
+        &.label {
+          color: #a7b0ba;
+          font-size: 13px;
+          line-height: 16px;
+        }
+      }
+    }
+  }
+}

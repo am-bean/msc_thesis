@@ -1,0 +1,13 @@
+node_modules/
+packages/
+settings.json
+production.json
+prod.json
+staging.json
+development.json
+local.json
+dev.json
+**/.idea
+.DS_Store
+deployment.json
+token.json

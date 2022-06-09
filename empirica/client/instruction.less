@@ -1,0 +1,132 @@
+.introduction-steps {
+  width: 100vw;
+  height: calc(~"100vh - 50px");
+  display: block;
+  display: grid;
+  grid-template-areas: "centered";
+}
+
+.centered {
+  grid-area: centered;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: #000000;
+
+  &.with-topper {
+    padding-top: 50px;
+  }
+
+  .instructions,
+  .quiz {
+    width: 614px;
+    button {
+      background: linear-gradient(180deg, #f6f8fb 0%, #e0e2e4 100%);
+      border: 1px solid #e0e2e4;
+      padding: 7px 15px;
+      cursor: pointer;
+      transition: opacity 300ms;
+
+      &:hover {
+        opacity: 0.75;
+      }
+    }
+  }
+  .intro-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    height: 200px;
+
+    img {
+      height: 200px;
+      max-width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+
+  .intro-flex {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+
+    .intro-column-65 {
+      flex: 0 0 65%;
+      max-width: 65%;
+
+      img {
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+    .intro-column-35 {
+      flex: 0 0 35%;
+      max-width: 35%;
+      padding-left: 25px;
+    }
+
+    .intro-column-90 {
+      flex: 0 0 90%;
+      max-width: 90%;
+
+      img {
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+
+    &.jc-center {
+      justify-content: center;
+    }
+  }
+  .radio-label {
+    line-height: 1.5;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+
+    .input-radio {
+      width: 35px;
+      display: flex;
+      align-items: flex-start;
+
+      &.no-option {
+        width: 19px;
+      }
+
+      input {
+        margin-top: 5px;
+        margin-right: 7px;
+      }
+    }
+    .text-radio {
+      flex: 0 0 calc(100% - 35px);
+    }
+  }
+  .question {
+    padding-left: 15px;
+    li {
+      margin-bottom: 20px;
+    }
+  }
+  .action-step {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+.intro-alert {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+
+  &.alert-error {
+    background: #ffb4b4;
+    border: 1px solid #ff6454;
+    border-radius: 4px;
+    color: #ff6454;
+  }
+}
