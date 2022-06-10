@@ -1,18 +1,18 @@
-# Speed Dating Experiment
+# Card Playing Experiment
 
-_This project was generated with [create-empirica-app](https://github.com/empiricaly/create-empirica-app)._
+_This project was generated with [create-empir ica-app](https://github.com/empiricaly/create-empirica-app). This ReadMe is also heavily based upon examples from the Empirica team, especially https://github.com/amaatouq _
 
 ## Experiment Demo:
 
-You and a group of friends can play with this experiment as we ran it by following these instructions (assuming you have [Meteor installed](https://www.meteor.com/install)):
+You can play with this experiment as we ran it by following these instructions (assuming you have [Meteor installed](https://www.meteor.com/install)):
 
-1. [Download](https://github.com/amaatouq/speed_dating_human_ai) the repository (and unzip). Alternatively, from terminal just run:
+1. [Download](git@github.com:am-bean/msc_thesis.git) the repository (and unzip). Alternatively, from terminal just run:
 
 ```ssh
-git clone https://github.com/amaatouq/speed_dating_human_ai
+git clone git@github.com:am-bean/msc_thesis.git
 ```
 
-2. Go into the folder with `cd speed_dating_human_ai`
+2. Go into the folder with `cd msc_thesis/empirica`
 3. Install the required dependencies by running `meteor npm install`
 4. Edit the `admin` password in the settings file `local.json` to something you like.
 5. Run the local instance with `meteor --settings local.json`
