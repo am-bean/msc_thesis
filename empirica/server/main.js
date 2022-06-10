@@ -98,141 +98,33 @@ Empirica.gameInit((game) => {
 
   for (let i = 0; i < roundCount; i++) {
 
-    // the initial two practice rounds with only initial guesses
-    if (i < 0) {
-      const round = game.addRound({
-        data: {
-          task: practiceData[i + 2],
-          practice: true,
-          case: "initial",
-          effectiveIndex: i + 3,
-        },
-      });
-      round.addStage({
-        name: "practice-initial",
-        displayName: "Practice - Initial Prediction",
-        durationInSeconds: stageDuration,
-        data: {
-          type: "solo",
-          practice: true,
-        },
-      });
-      if (feedback) {
-        round.addStage({
-          name: "practice-outcome",
-          displayName: "Case Outcome",
-          durationInSeconds: stageDuration,
-          data: {
-            type: "feedback",
-            practice: false,
-          },
-        });
-      }
-      continue;
-    }
-    //the start of the real game only initial guesses
-    if (i >= 0 && i < roundCount) {
-      const round = game.addRound({
-        data: {
-          task: shuffledData[i],
-          practice: false,
-          case: "initial",
-          effectiveIndex: i + 1,
-        },
-      });
-      round.addStage({
-        name: "initial",
-        displayName: "Initial Prediction",
-        durationInSeconds: stageDuration,
-        data: {
-          type: "solo",
-          practice: false,
-          
-        },
-      });
-      if (feedback) {
-        round.addStage({
-          name: "outcome",
-          displayName: "Case Outcome",
-          durationInSeconds: stageDuration,
-          data: {
-            type: "feedback",
-            practice: false,
-          },
-        });
-      }
-      continue;
-    }
-
-      ////now the practice round revision
-      if (i > roundCount && i < roundCount + 3) {
-        const round = game.addRound({
-          data: {
-            task: practiceData[i - roundCount - 1],
-            practice: true,
-            case: "revise",
-            effectiveIndex: i - roundCount,
-          },
-        });
-        round.addStage({
-          name: "practice-social",
-          displayName: "Practice - Revise Prediction",
-          durationInSeconds: socialStageDuration,
-          data: {
-            type: "social",
-            practice: true,
-            
-            interpretationType: interpretationType,
-          },
-        });
-
-        if (feedback) {
-          round.addStage({
-            name: "practice-outcome",
-            displayName: "Case Outcome",
-            durationInSeconds: stageDuration,
-            data: {
-              type: "feedback",
-              practice: false,
-              interpretationType: interpretationType,
-            },
-          });
-        }
-        continue;
-      }
-
-      if (i > roundCount + 3) {
-        const round = game.addRound({
-          data: {
-            task: shuffledData[i - (roundCount + 2 + 2)],
-            practice: false,
-            case: "revise", //whether revising the task
-            effectiveIndex: i - (roundCount + 2 + 1), // the two practice + instruction page
-          },
-        });
-        round.addStage({
-          name: "social",
-          displayName: "Interactive Prediction",
-          durationInSeconds: socialStageDuration,
-          data: {
-            type: "social",
-            practice: false,
-            
-            interpretationType: interpretationType,
-          },
-        });
-        if (feedback) {
-          round.addStage({
-            name: "outcome",
-            displayName: "Case Outcome",
-            durationInSeconds: stageDuration,
-            data: {
-              type: "feedback",
-              practice: false,
-              interpretationType: interpretationType,
-            },
-          });
-        }
-      }
+    const round = game.addRound({
+      data: {
+        task: shuffledData[i],
+        practice: false,
+        case: "initial",
+        effectiveIndex: i + 1,
+      },
+    });
+    round.addStage({
+      name: "initial",
+      displayName: "Initial Prediction",
+      durationInSeconds: stageDuration,
+      data: {
+        type: "solo",
+        practice: false,
+        
+      },
+    });
+    round.addStage({
+      name: "outcome",
+      displayName: "Trick Outcome",
+      durationInSeconds: stageDuration,
+      data: {
+        type: "feedback",
+        practice: false,
+      },
+    });
+    continue;
   }
 });
