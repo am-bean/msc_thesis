@@ -1,5 +1,5 @@
 # msc_thesis
-This repository contains the code for an experiment regarding the possibility of using rules-based agents as a proxy for human behaviour in multiagent reinforcement learning. It consists of three major folders: empirica, local_pygame, and dqn_agents, which are described below. Each draws on the results of the others, but is self-contained as far as code references. More detailed Readme files are available within each subfolder.
+This repository contains the code for an experiment regarding the possibility of using rules-based agents as a proxy for human behaviour in multiagent reinforcement learning. It consists of three major folders: empirica, local_pygame, and dqn_agents, which are described below. Each draws on the results of the others, but is self-contained as far as code references. More detailed Readme files will be made available within each subfolder.
 
 The Empirica folder is used to run an online human-participant experiment with the Empirica model. AI agents pre-trained locally are tested in live games against volunteers online.
 
