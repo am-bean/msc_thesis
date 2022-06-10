@@ -1,6 +1,6 @@
 # Card Playing Experiment
 
-_This project was generated with [create-empir ica-app](https://github.com/empiricaly/create-empirica-app). This ReadMe is also heavily based upon examples from the Empirica team, especially https://github.com/amaatouq _
+_This project was generated with [create-empir ica-app](https://github.com/empiricaly/create-empirica-app). This ReadMe is also heavily copied from examples from the Empirica team, especially https://github.com/amaatouq_
 
 ## Experiment Demo:
 
