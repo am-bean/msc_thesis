@@ -13,6 +13,15 @@ Empirica.onGameStart((game) => {
 // onRoundStart is triggered before each round starts, and before onStageStart.
 // It receives the same options as onGameStart, and the round that is starting.
 Empirica.onRoundStart((game, round) => {
+
+  const dummyCard = {rank: '10', suit: "clubs"}
+  const dummyCard2 = {rank: 'ace', suit: "hearts"}
+  const dummyHand = [dummyCard, dummyCard2]
+
+  game.players.forEach((player) => {
+    player.round.set("hand", dummyHand);
+  })
+
   console.log("onRoundStart start");
   if (round.get("case") === "initial") {
     game.players.forEach((player) => {
@@ -21,7 +30,6 @@ Empirica.onRoundStart((game, round) => {
         player.round.set("prediction", round.get("task").model_prediction_prob);
       } else {
         player.round.set("prediction", null);
-        // player.round.set("prediction", 0.5);
 
         if (round.get("practice")) {
           player.set(
@@ -78,6 +86,19 @@ Empirica.onRoundStart((game, round) => {
 Empirica.onStageStart((game, round, stage) => {
   console.log("onstage start now");
 
+  const dummyCard = {rank: '10', suit: "clubs"}
+  if (stage.name === "outcome" || stage.name === "practice-outcome"){
+    game.players.forEach((player) => {
+      let card = round.get(`played-${player.get("seat")}`)
+      stage.set(`played-${player.get("seat")}`, card)
+    }) 
+  } else {
+    game.players.forEach((player) => {
+      stage.set(`played-${player.get("seat")}`, dummyCard)
+      round.set(`played-${player.get("seat")}`, null)
+    })  
+  }
+
   if (round.get("case") === "revise" && game.treatment.giveFeedback) {
     if (stage.name === "outcome" || stage.name === "practice-outcome") {
       const outcome = round.get("task").correct_answer === "Yes" ? 1 : 0;
@@ -105,7 +126,12 @@ Empirica.onStageStart((game, round, stage) => {
 
 // onStageEnd is triggered after each stage.
 // It receives the same options as onRoundEnd, and the stage that just ended.
-Empirica.onStageEnd((game, round, stage) => {});
+Empirica.onStageEnd((game, round, stage) => {
+  const winner = Math.max(game.players.map((player) => {
+    player.get("prediction")
+  }))
+  round.set("winner", winner)
+});
 
 // onRoundEnd is triggered after each round.
 // It receives the same options as onGameEnd, and the round that just ended.
@@ -174,7 +200,6 @@ Empirica.onRoundEnd((game, round) => {
 // It receives the same options as onGameStart.
 Empirica.onGameEnd((game) => {
   console.log("The game", game._id, "has ended");
-  //const nStages = game.treatment.nBlocks * game.players.length + 1;
   const conversionRate = game.treatment.conversionRate;
 
   game.players.forEach((player) => {

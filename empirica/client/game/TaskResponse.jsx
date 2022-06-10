@@ -29,19 +29,26 @@ export default class TaskResponse extends React.Component {
   handleSubmit = (event, cardDetails) => {
     event.preventDefault();
 
-    const { player, stage } = this.props;
-    player.round.set("prediction", cardDetails["value"])
-    const prediction = player.round.get("prediction")
+    const { player, round,stage } = this.props;
+    if (!player.stage.submitted){
+      stage.set(`played-${player.get("seat")}`, cardDetails);
+      round.set(`played-${player.get("seat")}`, cardDetails);
+      let hand = player.round.get("hand").filter((item) => {return item !== cardDetails;});
+      player.round.set("hand", hand);
 
-    if (stage.name === "outcome" || stage.name === "practice-outcome") {
-      player.stage.submit();
-      return;
-    }
-    else{
       WarningToaster.show({ message: "You chose the " + cardDetails['rank'] + " of " + cardDetails['suit']});
       player.stage.submit();
-      return;
     }
+    return;
+  };
+
+  handleNext = (event) => {
+    event.preventDefault();
+
+    const { player, stage } = this.props;
+    player.stage.submit();
+    return;
+
   };
 
   renderResult() {
@@ -70,19 +77,23 @@ export default class TaskResponse extends React.Component {
               <div className="result-entry label">Winning Player</div>
               <div className="result-entry value">
                 {player.round.get("prediction") !== null
-                  ? Math.pow(
-                      correct_answer - player.round.get("prediction"),
-                      2
-                    ).toFixed(2)
-                  : 1}
+                  ? round.get("winner")
+                  : player.round.get("name")}
               </div>
             </div>
             <div className="result-item last-item">
               <div className="result-entry label">Cumulative Score</div>
               <div className="result-entry value">
-                {player.round.get("score").toFixed(2) || 0}
+                {player.round.get("score") || null}
               </div>
             </div>
+          </div>
+          <div className="next-button-box">
+          <input type="button" 
+                className="next-button" 
+                onClick={this.handleNext}
+                value="Next"
+          ></input>
           </div>
         </div>
       );
@@ -108,7 +119,7 @@ export default class TaskResponse extends React.Component {
 
   render() {
     const { player, stage } = this.props;
-    const dummyHand = player.get("hand")
+        
 
     const isOutcome =
       stage.name === "outcome" || stage.name === "practice-outcome";
@@ -123,7 +134,7 @@ export default class TaskResponse extends React.Component {
         )}
         {!isOutcome && (  
           <div className="cards-in-hand">
-            {this.renderHand(dummyHand, false)}
+            {this.renderHand(player.round.get("hand"), false)}
           </div>
         )}
       </div>

@@ -1,13 +1,17 @@
 import React from "react";
 
-const PlayingCard = ({ cardDetails }) => {
+const PlayingCard = ({ cardDetails, seat }) => {
+  
+  const isNull = cardDetails === null
   return (
     <div className="card-thumb">
-        <strong> {cardDetails["seat"]} </strong>
-        <img
-            src={`/cards/${cardDetails["rank"]}_of_${cardDetails["suit"]}.svg`}
-            alt={`2_of_clubs`}
-          />
+        <strong> {seat} </strong>
+        {!isNull && (  
+          <img
+          src={`/cards/${cardDetails["rank"]}_of_${cardDetails["suit"]}.svg`}
+          alt={`2_of_clubs`}
+        />
+        )}
     </div>
   );
 };
@@ -17,12 +21,9 @@ export default class TaskStimulus extends React.Component {
   state = { interestValue: 0.08 };
 
   render() {
-    const { stage, round } = this.props;
+    const {game, player, stage, round } = this.props;
     const task = round.get("task") || {};
     const pairData = task.features || {};
-    const dummyCard = {rank: 'jack', suit: "clubs", seat: "North"}
-    const dummyCard2 = {rank: 'ace', suit: "clubs", seat: "East"}
-    const dummyHand = [dummyCard, dummyCard2]
 
     return (
       <div className="cards-table">
@@ -39,7 +40,7 @@ export default class TaskStimulus extends React.Component {
           You are playing as South, with North as your partner.
         </h3>
         <div className="cards">
-          {dummyHand.map((val, i) => <PlayingCard cardDetails={val} key={i}/>)}
+          {game.players.map((plyr) => <PlayingCard cardDetails={stage.get(`played-${plyr.get("seat")}`)} key={plyr.get("seat")} seat={plyr.get("seat")}/>)}
         </div>
       </div>
     );

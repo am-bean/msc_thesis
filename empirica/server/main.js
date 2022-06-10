@@ -13,9 +13,6 @@ import data from "./experiment_data/task_data";
 // rounds and stages (with get/set methods), that will be able to use later in
 // the game.
 
-let questionText =
-  "Please review the profile below and predict whether they would like to date again.";
-
 let practiceData = [
   {
     Classes: "Pratice",
@@ -80,30 +77,26 @@ let practiceData = [
 ];
 
 Empirica.gameInit((game) => {
-  
-  const dummyCard = {rank: '10', suit: "clubs"}
-  const dummyCard2 = {rank: 'ace', suit: "hearts"}
-  const dummyHand = [dummyCard, dummyCard2]
+
+  const seats = ['North', 'East', 'South', 'West']
 
   game.players.forEach((player, i) => {
     player.set("avatar", `/avatars/jdenticon/${player._id}`);
     player.set("score", 0);
-    player.set("hand", dummyHand)
+    player.set("seat", seats[i])
   });
 
   const shuffledData = _.shuffle(data);
 
   const roundCount = game.treatment.roundCount || 10;
-  const playerCount = game.treatment.playerCount || 1;
+  const playerCount = game.treatment.playerCount || 4;
   const interpretationType = game.treatment.interpretationType || "None";
   const feedback = game.treatment.giveFeedback || false;
   const stageDuration = game.treatment.stageLength || 120;
   const socialStageDuration = game.treatment.socialStageLength || 120;
 
 
-  // - 2 to add the two practice rounds and * 2  because for each task instance, we will do it once alone, and then again with AI + feedback and the + 2 because we need that for the practice rounds too
-  for (let i = -2; i < roundCount * 2 + 2 * 2; i++) {
-    // the last + 1 is the number of instruction pages
+  for (let i = 0; i < roundCount; i++) {
 
     // the initial two practice rounds with only initial guesses
     if (i < 0) {
@@ -122,9 +115,19 @@ Empirica.gameInit((game) => {
         data: {
           type: "solo",
           practice: true,
-          questionText: questionText,
         },
       });
+      if (feedback) {
+        round.addStage({
+          name: "practice-outcome",
+          displayName: "Case Outcome",
+          durationInSeconds: stageDuration,
+          data: {
+            type: "feedback",
+            practice: false,
+          },
+        });
+      }
       continue;
     }
     //the start of the real game only initial guesses
@@ -144,33 +147,22 @@ Empirica.gameInit((game) => {
         data: {
           type: "solo",
           practice: false,
-          questionText: questionText,
+          
         },
       });
+      if (feedback) {
+        round.addStage({
+          name: "outcome",
+          displayName: "Case Outcome",
+          durationInSeconds: stageDuration,
+          data: {
+            type: "feedback",
+            practice: false,
+          },
+        });
+      }
       continue;
     }
-
-    if (playerCount > 1) {
-      // only if there is an AI
-      //now instructions
-      if (i === roundCount) {
-        const round = game.addRound({
-          data: {
-            practice: false,
-            case: "instruction",
-            effectiveIndex: null,
-          },
-        });
-        round.addStage({
-          name: "instruction",
-          displayName: "Instructions: Now you will revise",
-          durationInSeconds: stageDuration + 100000,
-          data: {
-            instruction: true,
-          },
-        });
-        continue;
-      }
 
       ////now the practice round revision
       if (i > roundCount && i < roundCount + 3) {
@@ -189,7 +181,7 @@ Empirica.gameInit((game) => {
           data: {
             type: "social",
             practice: true,
-            questionText: questionText,
+            
             interpretationType: interpretationType,
           },
         });
@@ -225,7 +217,7 @@ Empirica.gameInit((game) => {
           data: {
             type: "social",
             practice: false,
-            questionText: questionText,
+            
             interpretationType: interpretationType,
           },
         });
@@ -242,6 +234,5 @@ Empirica.gameInit((game) => {
           });
         }
       }
-    }
   }
 });
