@@ -23,12 +23,18 @@ Empirica.bot("bob", {
         bot.round.set("hand", hand);
         console.log("bob played");
         bot.stage.submit();
+        round.set(`submitted-${bot.get("seat")}`, true);
+        round.set(`submitted-West`, true);
+        round.set(`submitted-South`, true);
       }
     }
     if (stage.get("type") === "outcome") {
       const cardDetails = round.get(`played-${bot.get("seat")}`);
       stage.set(`played-${bot.get("seat")}`, cardDetails);
       bot.stage.submit();
+      round.set(`submitted-${bot.get("seat")}`, true);
+      round.set(`submitted-West`, true);
+      round.set(`submitted-South`, true);
     }
   },
 

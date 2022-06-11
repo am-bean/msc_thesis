@@ -31,7 +31,24 @@ export default class TaskResponse extends React.Component {
     
     const { player, round, stage } = this.props;
     const playersTurn =  ((player.get("seat") === round.get("winner")) || (round.get(`submitted-${player.get("follows")}`)))
-
+    console.log(round.get(`submitted-${player.get("follows")}`))
+    if (!playersTurn){
+      WarningToaster.show({ message: "Currently waiting on the bots to play"});
+      return;
+    }
+    if (player.stage.submitted){
+      WarningToaster.show({ message: "Currently waiting on the bots to play"});
+      return;
+    }
+    if (playersTurn && (player.get("seat") !== round.get("winner"))){
+      const leadSuit = stage.get(`played-${round.get("winner")}`)['suit']
+      const hasSuit = player.round.get("hand").some((item) => {return item['suit'] === leadSuit;})
+      const followedSuit = cardDetails['suit'] == leadSuit
+      if (hasSuit && !followedSuit){
+        WarningToaster.show({ message: "You must follow suit when possible."});
+        return;
+      }
+    }
     if (playersTurn && (!player.stage.submitted)){
       stage.set(`played-${player.get("seat")}`, cardDetails);
       round.set(`played-${player.get("seat")}`, cardDetails);
@@ -41,8 +58,8 @@ export default class TaskResponse extends React.Component {
       round.set(`submitted-${player.get("seat")}`, true);
       round.set(`submitted-West`, true);
       round.set(`submitted-South`, true);
+      return;
     }
-    return;
   };
 
   handleNext = (event) => {
