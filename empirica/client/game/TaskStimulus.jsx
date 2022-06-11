@@ -27,20 +27,21 @@ export default class TaskStimulus extends React.Component {
 
     return (
       <div className="cards-table">
-        {stage.get("type") === "feedback" ?       
+        {stage.get("type") === "outcome" ?       
           (<h3>
             These are all the cards played in the past round:
           </h3>) :
 
           (<h3>
-            The following cards have already been played this round:
+            The trick was led by {round.get("winner")}. The following cards have already been played this round:
           </h3>) 
         }
         <h3>
-          You are playing as South, with North as your partner.
+          You are playing as {player.get("seat")}, with {player.get("partner")} as your partner.
         </h3>
         <div className="cards">
-          {game.players.map((plyr) => <PlayingCard cardDetails={stage.get(`played-${plyr.get("seat")}`)} key={plyr.get("seat")} seat={plyr.get("seat")}/>)}
+          {game.players.map((plyr) => <PlayingCard cardDetails={stage.get(`played-${plyr.get("seat")}`)} 
+            key={plyr.get("seat")} seat={plyr.get("seat")}/>)}
         </div>
       </div>
     );

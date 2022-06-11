@@ -7,12 +7,9 @@ import TaskResponse from "./TaskResponse.jsx";
 export default class Round extends React.Component {
   renderRound() {
     const { round, stage, player, game } = this.props;
-    const single = true
-      //(stage.get("type") !== "social" && stage.get("type") !== "feedback") ||
-      //stage.get("interpretationType") === "None";
 
     return (
-      <main className={`main-container ${single ? "single-column" : ""}`}>
+      <main className={`main-container single-column`}>
         <header className="header-left">
           <PlayerProfile
             player={player}
@@ -34,7 +31,6 @@ export default class Round extends React.Component {
   }
   
   render() {
-    const { round } = this.props;
     return  this.renderRound();
   }
 }

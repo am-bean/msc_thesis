@@ -6,7 +6,6 @@ import Empirica from "meteor/empirica:core";
 Empirica.onGameStart((game) => {
   game.players.forEach((player) => {
     player.set("cumulativeScore", 0);
-    player.stage.set("firstPrediction", player.round.get("firstPrediction"));
   });
 });
 
@@ -14,71 +13,21 @@ Empirica.onGameStart((game) => {
 // It receives the same options as onGameStart, and the round that is starting.
 Empirica.onRoundStart((game, round) => {
 
-  const dummyCard = {rank: '10', suit: "clubs"}
-  const dummyCard2 = {rank: 'ace', suit: "hearts"}
-  const dummyHand = [dummyCard, dummyCard2]
+  const ranks = ['9','10','jack','queen','king','ace']
+  const suits = ['clubs','hearts','diamonds','spades']
+  const deck = suits.flatMap((s) => (ranks.map((r) => ({rank: r, suit: s}))));
 
-  game.players.forEach((player) => {
-    player.round.set("hand", dummyHand);
+  const shuffled = _.shuffle(deck)
+
+  game.players.forEach((player, i) => {
+    player.round.set("hand", shuffled.slice(i*6, (i+1)*6));
+    player.round.set("score", 0)
   })
 
+  round.set("winner", "East");
+
   console.log("onRoundStart start");
-  if (round.get("case") === "initial") {
-    game.players.forEach((player) => {
-      player.round.set("score", 0);
-      if (player.bot) {
-        player.round.set("prediction", round.get("task").model_prediction_prob);
-      } else {
-        player.round.set("prediction", null);
-
-        if (round.get("practice")) {
-          player.set(
-            `prediction-practice-${round.get("effectiveIndex")}`,
-            null
-          );
-        } else {
-          player.set(`prediction-${round.get("effectiveIndex")}`, null);
-        }
-        player.round.set("score", 0);
-      }
-    });
-  }
-
-  if (round.get("case") === "revise") {
-    game.players.forEach((player) => {
-      if (player.bot) {
-        player.round.set("prediction", round.get("task").model_prediction_prob);
-      } else {
-        if (round.get("practice")) {
-          console.log(
-            "previous prediction",
-            player.get(`prediction-practice-${round.get("effectiveIndex")}`)
-          );
-          player.round.set(
-            "prediction",
-            player.get(`prediction-practice-${round.get("effectiveIndex")}`)
-          );
-          player.round.set(
-            "previousPrediction",
-            player.get(`prediction-practice-${round.get("effectiveIndex")}`)
-          );
-        } else {
-          console.log(
-            "previous prediction",
-            player.get(`prediction-${round.get("effectiveIndex")}`)
-          );
-          player.round.set(
-            "prediction",
-            player.get(`prediction-${round.get("effectiveIndex")}`)
-          );
-          player.round.set(
-            "previousPrediction",
-            player.get(`prediction-${round.get("effectiveIndex")}`)
-          );
-        }
-      }
-    });
-  }
+  
 });
 
 // onStageStart is triggered before each stage starts.
@@ -86,129 +35,66 @@ Empirica.onRoundStart((game, round) => {
 Empirica.onStageStart((game, round, stage) => {
   console.log("onstage start now");
 
-  const dummyCard = {rank: '10', suit: "clubs"}
-  if (stage.name === "outcome" || stage.name === "practice-outcome"){
+  if (stage.get("type") === "outcome"){
     game.players.forEach((player) => {
       let card = round.get(`played-${player.get("seat")}`)
       stage.set(`played-${player.get("seat")}`, card)
     }) 
   } else {
     game.players.forEach((player) => {
-      stage.set(`played-${player.get("seat")}`, dummyCard)
+      stage.set(`played-${player.get("seat")}`, null)
       round.set(`played-${player.get("seat")}`, null)
+      round.set(`submitted-${player.get("seat")}`, false)
     })  
   }
 
-  if (round.get("case") === "revise" && game.treatment.giveFeedback) {
-    if (stage.name === "outcome" || stage.name === "practice-outcome") {
-      const outcome = round.get("task").correct_answer === "Yes" ? 1 : 0;
-
-      game.players.forEach((player) => {
-        const prediction = player.round.get("prediction");
-        if (prediction !== null && prediction !== undefined) {
-          const score = 1 - Math.pow(prediction - outcome, 2); //1 - brier score
-          console.log(
-            "outcome is ",
-            outcome,
-            "prediction",
-            prediction,
-            "score",
-            score
-          );
-          player.round.set("score", score);
-        } else {
-          player.round.set("score", 0);
-        }
-      });
-    }
-  }
 });
 
 // onStageEnd is triggered after each stage.
 // It receives the same options as onRoundEnd, and the stage that just ended.
 Empirica.onStageEnd((game, round, stage) => {
-  const winner = Math.max(game.players.map((player) => {
-    player.get("prediction")
-  }))
-  round.set("winner", winner)
+
+  if (stage.get("type") === "play"){
+    round.set("lead", round.get("winner"))
+    const leader = round.get("lead");
+    const leadCard = round.get(`played-${leader}`);
+    const rankValues = {"9":9, "10":10, "jack":11, "queen":12, "king":13, "ace":14};
+  
+    stage.set("winningSuit", leadCard["suit"]);
+    stage.set("winningRank", rankValues[leadCard["rank"]]);
+    stage.set("winningSeat", leader);
+    
+    game.players.forEach((player) => {
+      let card = round.get(`played-${player.get("seat")}`)
+      if ((card['suit'] === stage.get("winningSuit")) && (rankValues[card["rank"]] > stage.get("winningRank"))) {
+        stage.set("winningRank", rankValues[card["rank"]]);
+        stage.set("winningSeat", player.get("seat"));
+      } else if ((card['suit'] === "spades") && (stage.get("winningSuit") !== "spades")) {
+        stage.set("winningSuit", "spades");
+        stage.set("winningRank", rankValues[card["rank"]]);
+        stage.set("winningSeat", player.get("seat"));  
+      }
+    });
+
+    round.set("winner", stage.get("winningSeat"))
+    
+    game.players.forEach((player) => {
+      if ((round.get("winner") === player.get("seat")) || (round.get("winner") === player.get("partner"))){
+        player.round.set("score", player.round.get("score") + 1)
+      }
+    })
+  }
 });
 
 // onRoundEnd is triggered after each round.
 // It receives the same options as onGameEnd, and the round that just ended.
 Empirica.onRoundEnd((game, round) => {
-  if (round.get("case") === "initial") {
-    game.players.forEach((player) => {
-      const prediction = player.round.get("prediction");
-      if (prediction !== null && prediction !== undefined) {
-        // player.set(`prediction-${round.get("effectiveIndex")}`, prediction);
-        if (round.get("practice")) {
-          player.set(
-            `prediction-practice-${round.get("effectiveIndex")}`,
-            prediction
-          );
-        } else {
-          player.set(`prediction-${round.get("effectiveIndex")}`, prediction);
-        }
-      } else {
-        game.players.forEach((player) => {
-          if (round.get("practice")) {
-            player.set(
-              `prediction-practice-${round.get("effectiveIndex")}`,
-              null
-            );
-          } else {
-            player.set(`prediction-${round.get("effectiveIndex")}`, null);
-          }
-        });
-      }
-    });
-  }
-
-  if (round.get("case") === "revise" && game.treatment.giveFeedback === false) {
-    const outcome = round.get("task").correct_answer === "Yes" ? 1 : 0;
-
-    game.players.forEach((player) => {
-      const prediction = player.round.get("prediction");
-      if (prediction !== null && prediction !== undefined) {
-        const score = 1 - Math.pow(prediction - outcome, 2); //1 - brier score
-        console.log(
-          "outcome is ",
-          outcome,
-          "prediction",
-          prediction,
-          "score",
-          score
-        );
-        player.round.set("score", score);
-      } else {
-        player.round.set("score", 0);
-      }
-    });
-  }
-
-  if (round.get("case") === "revise" && !round.get("practice")) {
-    game.players.forEach((player) => {
-      player.set(
-        "cumulativeScore",
-        player.get("cumulativeScore") + player.round.get("score")
-      );
-    });
-  }
 });
 
 // onGameEnd is triggered when the game ends.
 // It receives the same options as onGameStart.
 Empirica.onGameEnd((game) => {
   console.log("The game", game._id, "has ended");
-  const conversionRate = game.treatment.conversionRate;
-
-  game.players.forEach((player) => {
-    const bonus =
-      player.get("cumulativeScore") > 0
-        ? Math.round(player.get("cumulativeScore") * conversionRate * 100) / 100
-        : 0;
-    player.set("bonus", bonus);
-  });
 });
 
 // ===========================================================================

@@ -28,77 +28,82 @@ const TimedButton = (props) => {
 export default class TaskResponse extends React.Component {
   handleSubmit = (event, cardDetails) => {
     event.preventDefault();
+    
+    const { player, round, stage } = this.props;
+    const playersTurn =  ((player.get("seat") === round.get("winner")) || (round.get(`submitted-${player.get("follows")}`)))
 
-    const { player, round,stage } = this.props;
-    if (!player.stage.submitted){
+    if (playersTurn && (!player.stage.submitted)){
       stage.set(`played-${player.get("seat")}`, cardDetails);
       round.set(`played-${player.get("seat")}`, cardDetails);
       let hand = player.round.get("hand").filter((item) => {return item !== cardDetails;});
       player.round.set("hand", hand);
-
-      WarningToaster.show({ message: "You chose the " + cardDetails['rank'] + " of " + cardDetails['suit']});
       player.stage.submit();
+      round.set(`submitted-${player.get("seat")}`, true);
+      round.set(`submitted-West`, true);
+      round.set(`submitted-South`, true);
     }
     return;
   };
 
   handleNext = (event) => {
     event.preventDefault();
-
     const { player, stage } = this.props;
     player.stage.submit();
+    round.set(`submitted-${player.get("seat")}`, true);
+    round.set(`submitted-West`, true);
+    round.set(`submitted-South`, true);
     return;
 
   };
 
   renderResult() {
     const { player, round, stage } = this.props;
-    const task = round.get("task");
+    const winner = round.get("winner") === player.get("seat");
 
-    const correct_answer = task.correct_answer === "Yes" ? 1 : 0;
-    if (stage.get("type") === "feedback") {
-      return (
-        <div className="result">
-          {correct_answer === 1 ? (
-            <div className="alert alert-error">
-              <div className="alert-content">
-                <strong>Outcome</strong> Your team won the trick
-              </div>
-            </div>
-          ) : (
-            <div className="alert">
-              <div className="alert-content">
-                <strong>Outcome</strong> The opposing team won the trick
-              </div>
-            </div>
-          )}
-          <div className="result-score">
-            <div className="result-item">
-              <div className="result-entry label">Winning Player</div>
-              <div className="result-entry value">
-                {player.round.get("prediction") !== null
-                  ? round.get("winner")
-                  : player.round.get("name")}
-              </div>
-            </div>
-            <div className="result-item last-item">
-              <div className="result-entry label">Cumulative Score</div>
-              <div className="result-entry value">
-                {player.round.get("score") || null}
-              </div>
+    return (
+      <div className="result">
+        {winner ? (
+          <div className="alert alert-error">
+            <div className="alert-content">
+              <strong>Outcome</strong> Your team won the trick
             </div>
           </div>
-          <div className="next-button-box">
-          <input type="button" 
-                className="next-button" 
-                onClick={this.handleNext}
-                value="Next"
-          ></input>
+        ) : (
+          <div className="alert">
+            <div className="alert-content">
+              <strong>Outcome</strong> The opposing team won the trick
+            </div>
+          </div>
+        )}
+        <div className="result-score">
+        <div className="result-item">
+            <div className="result-entry label">Played Lead</div>
+            <div className="result-entry value">
+              {round.get("lead")}
+            </div>
+          </div>
+          <div className="result-item">
+            <div className="result-entry label">Winning Player</div>
+            <div className="result-entry value">
+              {round.get("winner")}
+            </div>
+          </div>
+          <div className="result-item last-item">
+            <div className="result-entry label">Cumulative Score</div>
+            <div className="result-entry value">
+              {player.round.get("score")}
+            </div>
           </div>
         </div>
-      );
-    }
-    return null;
+        <div className="next-button-box">
+        <input type="button" 
+              className="next-button" 
+              onClick={this.handleNext}
+              value="Next"
+        ></input>
+        </div>
+      </div>
+    );
   }
 
   renderHand = (playerHand, isDisabled) => {
@@ -113,31 +118,37 @@ export default class TaskResponse extends React.Component {
         disabled={isDisabled}
       />)
     );
-
   };
+
+  renderPrompt() {
+    const {player} = this.props
+    return(
+      <div>
+        <h3>
+          Please choose the card from your hand which you would like to play.
+        </h3>
+        <div className="cards-in-hand">
+          {this.renderHand(player.round.get("hand"), false)}
+        </div>
+      </div>
+    )
+  }
 
 
   render() {
     const { player, stage } = this.props;
-        
-
-    const isOutcome =
-      stage.name === "outcome" || stage.name === "practice-outcome";
-    
-    return (
-      <div className="response">
-        {this.renderResult()}
-        {!isOutcome && (
-          <h3>
-            Please choose the card from your hand which you would like to play.
-          </h3>
-        )}
-        {!isOutcome && (  
-          <div className="cards-in-hand">
-            {this.renderHand(player.round.get("hand"), false)}
-          </div>
-        )}
-      </div>
-    );
+    if (stage.get("type") === "outcome"){
+      return (
+        <div className="response">
+          {this.renderResult()}
+        </div>
+      );
+    } else {
+      return(
+        <div className="response">
+          {this.renderPrompt()}
+        </div>
+      )
+    }
   }
 }
