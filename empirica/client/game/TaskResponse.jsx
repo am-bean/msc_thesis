@@ -56,8 +56,6 @@ export default class TaskResponse extends React.Component {
       player.round.set("hand", hand);
       player.stage.submit();
       round.set(`submitted-${player.get("seat")}`, true);
-      round.set(`submitted-West`, true);
-      round.set(`submitted-South`, true);
       return;
     }
   };
@@ -67,15 +65,13 @@ export default class TaskResponse extends React.Component {
     const { player, stage } = this.props;
     player.stage.submit();
     round.set(`submitted-${player.get("seat")}`, true);
-    round.set(`submitted-West`, true);
-    round.set(`submitted-South`, true);
     return;
 
   };
 
   renderResult() {
     const { player, round, stage } = this.props;
-    const winner = round.get("winner") === player.get("seat");
+    const winner = ((round.get("winner") === player.get("seat")) || (round.get("winner") === player.get("partner")));
 
     return (
       <div className="result">

@@ -24,8 +24,6 @@ Empirica.bot("bob", {
         console.log("bob played");
         bot.stage.submit();
         round.set(`submitted-${bot.get("seat")}`, true);
-        round.set(`submitted-West`, true);
-        round.set(`submitted-South`, true);
       }
     }
     if (stage.get("type") === "outcome") {
@@ -33,8 +31,6 @@ Empirica.bot("bob", {
       stage.set(`played-${bot.get("seat")}`, cardDetails);
       bot.stage.submit();
       round.set(`submitted-${bot.get("seat")}`, true);
-      round.set(`submitted-West`, true);
-      round.set(`submitted-South`, true);
     }
   },
 
