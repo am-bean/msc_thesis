@@ -24,6 +24,17 @@ export default class TaskStimulus extends React.Component {
     const {game, player, stage, round } = this.props;
     const task = round.get("task") || {};
     const pairData = task.features || {};
+    const seats = ["North", "East", "South", "West"]
+    let index = seats.findIndex( element => {
+      if ((element === round.get("lead")) && (stage.get("type") === "outcome")) {
+        return true;
+      }
+      if ((element === round.get("winner")) && (stage.get("type") === "play")) {
+        return true;
+      }
+    });
+    let displayOrder = []
+    seats.forEach((s,i) => displayOrder[(i - index + 4) % 4] = s)
 
     return (
       <div className="cards-table">
@@ -33,15 +44,16 @@ export default class TaskStimulus extends React.Component {
           </h3>) :
 
           (<h3>
-            The trick was led by {round.get("winner")}. The following cards have already been played this round:
+            {round.get("winner")} has the lead in this. The following cards have already been played this round:
           </h3>) 
         }
         <h3>
           You are playing as {player.get("seat")}, with {player.get("partner")} as your partner.
         </h3>
         <div className="cards">
-          {game.players.map((plyr) => <PlayingCard cardDetails={stage.get(`played-${plyr.get("seat")}`)} 
-            key={plyr.get("seat")} seat={plyr.get("seat")}/>)}
+          {displayOrder.map((seat) => 
+          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat}/>
+            )}
         </div>
       </div>
     );

@@ -31,7 +31,7 @@ export default class TaskResponse extends React.Component {
     
     const { player, round, stage } = this.props;
     const playersTurn =  ((player.get("seat") === round.get("winner")) || (round.get(`submitted-${player.get("follows")}`)))
-    console.log(round.get(`submitted-${player.get("follows")}`))
+
     if (!playersTurn){
       WarningToaster.show({ message: "Currently waiting on the bots to play"});
       return;
@@ -62,9 +62,9 @@ export default class TaskResponse extends React.Component {
 
   handleNext = (event) => {
     event.preventDefault();
-    const { player, stage } = this.props;
-    player.stage.submit();
+    const { player, stage, round } = this.props;
     round.set(`submitted-${player.get("seat")}`, true);
+    player.stage.submit();
     return;
 
   };

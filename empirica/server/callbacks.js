@@ -33,7 +33,7 @@ Empirica.onRoundStart((game, round) => {
 // onStageStart is triggered before each stage starts.
 // It receives the same options as onRoundStart, and the stage that is starting.
 Empirica.onStageStart((game, round, stage) => {
-  console.log("onstage start now");
+  console.log(`Stage ${stage.get("type")} start`)
 
   if (stage.get("type") === "outcome"){
     game.players.forEach((player) => {
@@ -45,7 +45,7 @@ Empirica.onStageStart((game, round, stage) => {
       stage.set(`played-${player.get("seat")}`, null)
       round.set(`played-${player.get("seat")}`, null)
       round.set(`submitted-${player.get("seat")}`, false)
-    })  
+    }) 
   }
 
 });
