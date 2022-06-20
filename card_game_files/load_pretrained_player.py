@@ -8,16 +8,17 @@ from ray.rllib.models import ModelCatalog
 from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
 
-import cards_env
-from train_with_random_agents import MaskedRandomPolicy
-from train_with_random_agents import TorchMaskedActions
-from mask_dqn_model import default_config
+import dqn_agents.cards_env as cards_env
+from dqn_agents.train_with_random_agents import MaskedRandomPolicy
+from dqn_agents.train_with_random_agents import TorchMaskedActions
+from dqn_agents.mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
 
 
 def load_pretrained_player(checkpoint):
 
+    ray.shutdown()
     ray.init(num_cpus=4)
 
     # Get obs- and action Spaces.

@@ -11,7 +11,7 @@ from ray.rllib.utils.torch_utils import FLOAT_MAX
 from ray.rllib.utils.annotations import override
 
 
-import cards_env
+from dqn_agents import cards_env
 
 torch, nn = try_import_torch()
 

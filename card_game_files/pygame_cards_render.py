@@ -4,7 +4,7 @@ from time import sleep
 import pygame
 
 import ray
-import best_checkpoints
+import dqn_agents.best_checkpoints as best_checkpoints
 from card_game_files.load_pretrained_player import load_pretrained_player
 from pygame_render_helpers import show_title, show_scores, show_curec, draw_arrow
 from pygame_constants import *

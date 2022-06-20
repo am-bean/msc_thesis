@@ -10,9 +10,9 @@ from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.framework import try_import_torch
 from ray.tune.registry import register_env
 
-from mask_dqn_model import TorchMaskedActions, MaskedRandomPolicy, default_config
+from dqn_agents.mask_dqn_model import TorchMaskedActions, MaskedRandomPolicy, default_config
 
-import cards_env
+from dqn_agents import cards_env
 
 torch, nn = try_import_torch()
 
