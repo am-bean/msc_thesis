@@ -23,12 +23,12 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-timesteps", type=int, default=300000)
+parser.add_argument("--stop-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=2)
 
 if __name__ == "__main__":
 
-    best_checkpoint = best_checkpoints()['3_1']
+    best_checkpoint = best_checkpoints()['4_7']
 
     args = parser.parse_args()
 
@@ -92,11 +92,11 @@ if __name__ == "__main__":
 
     results = tune.run(
         "DQN",
-        stop={"timesteps_total": args.stop_timesteps},
+        stop={"training_iteration": args.stop_iters},
         config=new_config,
         checkpoint_freq=1000,
         reuse_actors=True,
-        max_concurrent_trials=1000,
+        # max_concurrent_trials=1000,
         verbose=1
     )
 

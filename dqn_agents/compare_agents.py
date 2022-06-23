@@ -52,8 +52,8 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    first_checkpoint = best_checkpoints()['3_2']
-    second_checkpoint = best_checkpoints()['0_0']
+    first_checkpoint = best_checkpoints()['4_8']
+    second_checkpoint = best_checkpoints()['4_4']
 
     second_config = deepcopy(first_config)
     second_config["multiagent"] = {
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     new_trainer.set_weights({pid: second_trained_weights['player_0'] for pid in use_second_trained})
 
     cum_rewards = {'player_0': 0, 'player_1': 0, 'player_2': 0, 'player_3': 0}
-    for i in range(10000):
+    for i in range(5000):
         # run until episode ends
         done = False
         my_env.seed(i)

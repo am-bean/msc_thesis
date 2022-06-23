@@ -53,7 +53,7 @@ if __name__ == "__main__":
     ray.init(num_cpus=num_cpus)
 
     results = tune.run('DQN',
-             stop={"timesteps_total": 150000},
+             stop={"training_iteration": 5000},
              checkpoint_freq=1000,
              config=config,
              )
