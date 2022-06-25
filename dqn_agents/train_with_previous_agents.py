@@ -25,91 +25,99 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=5000)
+parser.add_argument("--stop-iters", type=int, default=40000)
 parser.add_argument("--num-cpus", type=int, default=2)
 
 if __name__ == "__main__":
 
-    best_checkpoint = best_checkpoints()['8_5']
+    best_checkpoint = best_checkpoints()['long_0']
+    training_checkpoints = []
 
     args = parser.parse_args()
 
-    ray.init(num_cpus=4)
+    for iters in range(4):
+        ray.init(num_cpus=4)
 
-    # Get obs- and action Spaces.
-    def env_creator():
-        env = cards_env.env()
-        return env
+        # Get obs- and action Spaces.
+        def env_creator():
+            env = cards_env.env()
+            return env
 
 
-    ModelCatalog.register_custom_model("masked_dqn", TorchMaskedActions)
-    register_env("cards", lambda config: PettingZooEnv(env_creator()))
+        ModelCatalog.register_custom_model("masked_dqn", TorchMaskedActions)
+        register_env("cards", lambda config: PettingZooEnv(env_creator()))
 
-    my_env = PettingZooEnv(env_creator())
-    obs_space = my_env.observation_space
-    act_space = my_env.action_space
+        my_env = PettingZooEnv(env_creator())
+        obs_space = my_env.observation_space
+        act_space = my_env.action_space
 
-    # Setup DQN with an ensemble of `num_policies` different policies.
+        # Setup DQN with an ensemble of `num_policies` different policies.
 
-    old_config = default_config()
+        old_config = default_config()
 
-    old_config["env"] = "cards"
-    old_config["multiagent"] = {
-        "policies": {
-            "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_1": (MaskedRandomPolicy, obs_space, act_space, {}),
-            "player_2": (MaskedRandomPolicy, obs_space, act_space, {}),
-            "player_3": (MaskedRandomPolicy, obs_space, act_space, {}),
-        },
-        "policy_mapping_fn": lambda agent_id: agent_id,
-        "policies_to_train": ["player_0"],
-    }
+        old_config["env"] = "cards"
+        old_config["multiagent"] = {
+            "policies": {
+                "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+                "player_1": (MaskedRandomPolicy, obs_space, act_space, {}),
+                "player_2": (MaskedRandomPolicy, obs_space, act_space, {}),
+                "player_3": (MaskedRandomPolicy, obs_space, act_space, {}),
+            },
+            "policy_mapping_fn": lambda agent_id: agent_id,
+            "policies_to_train": ["player_0"],
+        }
 
-    new_config = deepcopy(old_config)
-    new_config["multiagent"] = {
-        "policies": {
-            "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_1": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_2": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_3": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-        },
-        "policy_mapping_fn": lambda agent_id: agent_id,
-        "policies_to_train": ["player_0"],
-    }
+        new_config = deepcopy(old_config)
+        new_config["multiagent"] = {
+            "policies": {
+                "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+                "player_1": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+                "player_2": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+                "player_3": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+            },
+            "policy_mapping_fn": lambda agent_id: agent_id,
+            "policies_to_train": ["player_0"],
+        }
 
-    # Create a dummy Trainer to load our checkpoint.
-    dummy_trainer = DQNTrainer(config=old_config)
-    new_trainer = DQNTrainer(config=new_config)
-    # Get untrained weights for all policies.
-    untrained_weights = new_trainer.get_weights()
-    # Restore all policies from checkpoint.
-    dummy_trainer.restore(best_checkpoint)
-    # Get trained weights
-    trained_weights = dummy_trainer.get_weights()
-    # Set all the weights to the trained agent weights
-    new_trainer.set_weights({pid: trained_weights['player_0'] for pid, _ in untrained_weights.items()})
-    # Create the checkpoint from which tune can pick up the
-    # experiment.
-    new_checkpoint = new_trainer.save()
+        # Create a dummy Trainer to load our checkpoint.
+        dummy_trainer = DQNTrainer(config=old_config)
+        new_trainer = DQNTrainer(config=new_config)
+        # Get untrained weights for all policies.
+        untrained_weights = new_trainer.get_weights()
+        # Restore all policies from checkpoint.
+        dummy_trainer.restore(best_checkpoint)
+        # Get trained weights
+        trained_weights = dummy_trainer.get_weights()
+        # Set all the weights to the trained agent weights
+        new_trainer.set_weights({pid: trained_weights['player_0'] for pid, _ in untrained_weights.items()})
+        # Create the checkpoint from which tune can pick up the
+        # experiment.
+        new_checkpoint = new_trainer.save()
 
-    results = tune.run(
-        "DQN",
-        stop={"training_iteration": args.stop_iters},
-        config=new_config,
-        checkpoint_freq=1000,
-        reuse_actors=True,
-        # max_concurrent_trials=1000,
-        verbose=1
-    )
+        results = tune.run(
+            "DQN",
+            stop={"training_iteration": args.stop_iters},
+            config=new_config,
+            checkpoint_freq=1000,
+            reuse_actors=True,
+            # max_concurrent_trials=1000,
+            verbose=1
+        )
 
-    print(f'The checkpoint string below needs to be added to the best_checkpoints file')
-    print(f'Then update the variable at the top of this file to the next number e.g. 5_2 and run it again')
-    print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
+        cp = results.get_last_checkpoint(results.trials[0])
+        print(f'The checkpoint string below needs to be added to the best_checkpoints file')
+        print(f'Then update the variable at the top of this file to the next number e.g. 5_2 and run it again')
+        print(f'Last checkpoint: {cp}')
 
-    ray.shutdown()
+        ray.shutdown()
 
-    winsound.Beep(440, 500)
-    winsound.Beep(880, 500)
-    winsound.Beep(440, 500)
-    winsound.Beep(880, 500)
-    winsound.Beep(440, 500)
+        training_checkpoints.append(cp)
+        best_checkpoint = cp
+
+        winsound.Beep(440, 500)
+        winsound.Beep(880, 500)
+        winsound.Beep(440, 500)
+        winsound.Beep(880, 500)
+        winsound.Beep(440, 500)
+
+    print(training_checkpoints)
