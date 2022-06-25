@@ -14,6 +14,8 @@ from dqn_agents.mask_dqn_model import TorchMaskedActions, MaskedRandomPolicy, de
 
 from dqn_agents import cards_env
 
+import winsound
+
 torch, nn = try_import_torch()
 
 if __name__ == "__main__":
@@ -53,11 +55,19 @@ if __name__ == "__main__":
     ray.init(num_cpus=num_cpus)
 
     results = tune.run('DQN',
-             stop={"training_iteration": 5000},
+             stop={"training_iteration": 160000},
              checkpoint_freq=1000,
              config=config,
              )
 
+    print(f'The checkpoint string below needs to be added to the best_checkpoints file')
+    print('After this one switch to the previous agents file')
     print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
 
     ray.shutdown()
+
+    winsound.Beep(440, 500)
+    winsound.Beep(880, 500)
+    winsound.Beep(440, 500)
+    winsound.Beep(880, 500)
+    winsound.Beep(440, 500)

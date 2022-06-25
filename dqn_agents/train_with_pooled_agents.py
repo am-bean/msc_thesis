@@ -3,6 +3,7 @@
 
 import argparse
 from copy import deepcopy
+from random import shuffle
 
 import ray
 from ray import tune
@@ -30,7 +31,7 @@ parser.add_argument("--num-cpus", type=int, default=2)
 
 if __name__ == "__main__":
 
-    best_checkpoint = best_checkpoints()['8_5']
+    checkpoints_list = ['4_8', '5_8', '6_8', '7_8']
 
     args = parser.parse_args()
 
@@ -74,7 +75,7 @@ if __name__ == "__main__":
             "player_3": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
         },
         "policy_mapping_fn": lambda agent_id: agent_id,
-        "policies_to_train": ["player_0"],
+        "policies_to_train": ["player_0", "player_1", "player_2", "player_3"],
     }
 
     # Create a dummy Trainer to load our checkpoint.
@@ -82,29 +83,42 @@ if __name__ == "__main__":
     new_trainer = DQNTrainer(config=new_config)
     # Get untrained weights for all policies.
     untrained_weights = new_trainer.get_weights()
-    # Restore all policies from checkpoint.
-    dummy_trainer.restore(best_checkpoint)
-    # Get trained weights
-    trained_weights = dummy_trainer.get_weights()
-    # Set all the weights to the trained agent weights
-    new_trainer.set_weights({pid: trained_weights['player_0'] for pid, _ in untrained_weights.items()})
-    # Create the checkpoint from which tune can pick up the
-    # experiment.
-    new_checkpoint = new_trainer.save()
 
-    results = tune.run(
-        "DQN",
-        stop={"training_iteration": args.stop_iters},
-        config=new_config,
-        checkpoint_freq=1000,
-        reuse_actors=True,
-        # max_concurrent_trials=1000,
-        verbose=1
-    )
+    weights_list = {}
+    for checkpoint in checkpoints_list:
+        # Restore all policies from checkpoint.
+        dummy_trainer.restore(best_checkpoints()[checkpoint])
+        # Get trained weights
+        trained_weights = dummy_trainer.get_weights()
+        # Set all the weights to the trained agent weights
+        weights_list[checkpoint] = trained_weights['player_0']
 
-    print(f'The checkpoint string below needs to be added to the best_checkpoints file')
-    print(f'Then update the variable at the top of this file to the next number e.g. 5_2 and run it again')
-    print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
+    for i in range(5):
+        weights_dict = {}
+        shuffle(checkpoints_list)
+        for j, pid in enumerate(untrained_weights.keys()):
+            weights_dict[pid] = weights_list[checkpoints_list[j]]
+        new_trainer.set_weights(weights_dict)
+        # Create the checkpoint from which tune can pick up the
+        # experiment.
+        new_checkpoint = new_trainer.save()
+
+        results = tune.run(
+            "DQN",
+            stop={"training_iteration": 10},
+            config=new_config,
+            checkpoint_freq=1000,
+            reuse_actors=True,
+            # max_concurrent_trials=1000,
+            verbose=1
+        )
+
+        print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
+
+        trained_weights = new_trainer.get_weights()
+        for j, pid in enumerate(trained_weights.keys()):
+            weights_list[checkpoints_list[j]] = trained_weights[pid]
+
 
     ray.shutdown()
 
