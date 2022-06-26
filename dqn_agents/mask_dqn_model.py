@@ -95,6 +95,7 @@ def default_config():
     config["no_done_at_end"] = False
     config["framework"] = "torch"
     config["log_level"] = "WARN"
+
     config["n_step"] = 1
 
     config["exploration_config"] = {
