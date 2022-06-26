@@ -4,7 +4,6 @@ from copy import deepcopy
 import numpy as np
 import ray
 from ray import tune
-from ray.rllib.agents.registry import get_agent_class
 from ray.rllib.env import PettingZooEnv
 from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.framework import try_import_torch

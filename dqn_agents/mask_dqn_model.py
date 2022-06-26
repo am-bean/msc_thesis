@@ -3,7 +3,7 @@ import numpy as np
 from copy import deepcopy
 
 from ray.rllib.agents.dqn.dqn_torch_model import DQNTorchModel
-from ray.rllib.agents.registry import get_agent_class
+from ray.rllib.agents.registry import get_trainer_class
 from ray.rllib.examples.policy.random_policy import RandomPolicy
 from ray.rllib.models.torch.fcnet import FullyConnectedNetwork as TorchFC
 from ray.rllib.utils.framework import try_import_torch
@@ -80,12 +80,13 @@ class MaskedRandomPolicy(RandomPolicy):
 
 
 def default_config():
-    config = deepcopy(get_agent_class('DQN')._default_config)
+    config = deepcopy(get_trainer_class('DQN')._default_config)
 
     config["v_min"] = -10.0
     config["v_max"] = 10.0
     config["lr"] = 0.001
     config["num_gpus"] = 1 if torch.cuda.is_available() else 0
+
     config["log_level"] = "DEBUG"
     config["num_workers"] = 1
     config["rollout_fragment_length"] = 30
@@ -93,7 +94,7 @@ def default_config():
     config["horizon"] = 200
     config["no_done_at_end"] = False
     config["framework"] = "torch"
-
+    config["log_level"] = "WARN"
     config["n_step"] = 1
 
     config["exploration_config"] = {
