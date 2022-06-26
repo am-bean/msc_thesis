@@ -29,12 +29,12 @@ parser.add_argument("--num-cpus", type=int, default=2)
 
 if __name__ == "__main__":
 
-    best_checkpoint = best_checkpoints()['long_0']
+    best_checkpoint = best_checkpoints()['l2_0']
     training_checkpoints = []
 
     args = parser.parse_args()
 
-    for iters in range(4):
+    for iters in range(2):
         ray.init(num_cpus=4)
 
         # Get obs- and action Spaces.

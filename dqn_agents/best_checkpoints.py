@@ -52,5 +52,6 @@ def best_checkpoints():
         'pool_1': filepath + 'DQN_cards_1fe21_00000_0_2022-06-24_17-10-11\checkpoint_001000\checkpoint-1000',
         'long_0': filepath + 'DQN_cards_d7d8d_00000_0_2022-06-24_19-31-20\checkpoint_040000\checkpoint-40000',
         'long_3': filepath + 'DQN_cards_bd91d_00000_0_2022-06-25_05-10-25\checkpoint_040000\checkpoint-40000',
+        'l2_0': filepath + 'DQN_cards_4d039_00000_0_2022-06-25_16-34-28\checkpoint_040000\checkpoint-40000',
     }
     return checkpoints
