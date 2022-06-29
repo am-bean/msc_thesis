@@ -18,7 +18,6 @@ from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
 
-import winsound
 
 torch, nn = try_import_torch()
 
@@ -34,7 +33,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    for iters in range(2):
+    for iters in range(4):
         ray.init(num_cpus=4)
 
         # Get obs- and action Spaces.
@@ -112,11 +111,5 @@ if __name__ == "__main__":
 
         training_checkpoints.append(cp)
         best_checkpoint = cp
-
-        winsound.Beep(440, 500)
-        winsound.Beep(880, 500)
-        winsound.Beep(440, 500)
-        winsound.Beep(880, 500)
-        winsound.Beep(440, 500)
 
     print(training_checkpoints)

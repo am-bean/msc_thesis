@@ -50,8 +50,18 @@ def best_checkpoints():
         '8_4': filepath + 'DQN_cards_0f26a_00000_0_2022-06-23_22-54-30\checkpoint_005000\checkpoint-5000',
         '8_5': filepath + 'DQN_cards_810f9_00000_0_2022-06-24_00-16-26\checkpoint_005000\checkpoint-5000',
         'pool_1': filepath + 'DQN_cards_1fe21_00000_0_2022-06-24_17-10-11\checkpoint_001000\checkpoint-1000',
-        'long_0': filepath + 'DQN_cards_d7d8d_00000_0_2022-06-24_19-31-20\checkpoint_040000\checkpoint-40000',
-        'long_3': filepath + 'DQN_cards_bd91d_00000_0_2022-06-25_05-10-25\checkpoint_040000\checkpoint-40000',
+        'l1_0': filepath + 'DQN_cards_d7d8d_00000_0_2022-06-24_19-31-20\checkpoint_040000\checkpoint-40000',
+        'l1_3': filepath + 'DQN_cards_bd91d_00000_0_2022-06-25_05-10-25\checkpoint_040000\checkpoint-40000',
         'l2_0': filepath + 'DQN_cards_4d039_00000_0_2022-06-25_16-34-28\checkpoint_040000\checkpoint-40000',
+        'l2_1': filepath + 'DQN_cards_42c48_00000_0_2022-06-25_19-18-49\checkpoint_040000\checkpoint-40000',
+        'l2_2': filepath + 'DQN_cards_f2869_00000_0_2022-06-25_21-03-57\checkpoint_040000\checkpoint-40000',
+        'l2_3': filepath + 'DQN_cards_3d870_00000_0_2022-06-26_05-55-46\checkpoint_040000\checkpoint-40000',
+        'l3_0': filepath + 'DQN_cards_0df60_00000_0_2022-06-26_15-27-06\checkpoint_040000\checkpoint-40000',
+        'l3_1': filepath + 'DQN_cards_25fc2_00000_0_2022-06-26_18-48-12\checkpoint_040000\checkpoint-40000',
+        'l3_2': filepath + 'DQN_cards_f118d_00000_0_2022-06-26_20-34-06\checkpoint_040000\checkpoint-40000',
+        'l3_3': filepath + 'DQN_cards_031c8_00000_0_2022-06-26_22-21-58\checkpoint_040000\checkpoint-40000',
+        'l3_4': filepath + 'DQN_cards_67cc8_00000_0_2022-06-27_00-12-10\checkpoint_040000\checkpoint-40000',
+        'l5_0': filepath + 'DQN_cards_c3fa9_00000_0_2022-06-27_05-36-52\checkpoint_040000\checkpoint-40000',
+
     }
     return checkpoints
