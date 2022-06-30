@@ -1,6 +1,7 @@
 import numpy as np
 
 from copy import deepcopy
+import multiprocessing
 
 from ray.rllib.agents.dqn.dqn_torch_model import DQNTorchModel
 from ray.rllib.agents.registry import get_trainer_class
@@ -87,7 +88,6 @@ def default_config():
     config["lr"] = 0.001
     config["num_gpus"] = 1 if torch.cuda.is_available() else 0
 
-    config["log_level"] = "DEBUG"
     config["num_workers"] = 1
     config["rollout_fragment_length"] = 30
     config["train_batch_size"] = 200
