@@ -2,6 +2,7 @@ import os
 from copy import deepcopy
 
 import numpy as np
+import platform
 import ray
 import argparse
 from ray import tune
@@ -72,3 +73,8 @@ if __name__ == "__main__":
     print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
 
     ray.shutdown()
+
+    machine = platform.uname()[1]
+
+    if machine != 'AndrewXPS15':
+        os.shutdown()

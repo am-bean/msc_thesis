@@ -1,6 +1,7 @@
 """Loads a previously trained set of agents and then continues to train one of them.
 """
-
+import os
+import platform
 import argparse
 from copy import deepcopy
 import multiprocessing
@@ -117,3 +118,7 @@ if __name__ == "__main__":
         best_checkpoint = cp
 
     print(training_checkpoints)
+    machine = platform.uname()[1]
+
+    if machine != 'AndrewXPS15':
+        os.shutdown()
