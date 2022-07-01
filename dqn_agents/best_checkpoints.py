@@ -20,4 +20,4 @@ def update_best_checkpoints(file=None, key=None):
 
 
 if __name__ == "__main__":
-    update_best_checkpoints('DQN_cards_67a22_00000_0_2022-07-01_11-31-53\checkpoint_040000\checkpoint-40000','l6_2')
+    update_best_checkpoints('DQN_cards_4cd5a_00000_0_2022-07-01_12-21-14\checkpoint_040000\checkpoint-40000','l1_2')
