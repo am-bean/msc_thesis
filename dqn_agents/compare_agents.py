@@ -13,7 +13,7 @@ from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
 
 import cards_env
-from best_checkpoints import best_checkpoints
+from best_checkpoints import best_checkpoints, update_best_checkpoints
 from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
@@ -73,8 +73,8 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    first_checkpoint = best_checkpoints(args.cp_filepath)[args.first_checkpoint]
-    second_checkpoint = best_checkpoints(args.cp_filepath)[args.second_checkpoint]
+    first_checkpoint = args.cp_filepath + best_checkpoints()[args.first_checkpoint]
+    second_checkpoint = args.cp_filepath + best_checkpoints()[args.second_checkpoint]
 
     second_config = deepcopy(first_config)
     second_config["multiagent"] = {
@@ -122,3 +122,5 @@ if __name__ == "__main__":
             print(cum_rewards)
 
     ray.shutdown()
+
+    update_best_checkpoints()

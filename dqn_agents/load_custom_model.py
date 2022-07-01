@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
         best_checkpoint = results.get_last_checkpoint(results.trials[0])
     else:
-        best_checkpoint = best_checkpoints(args.cp_filepath)['0_0']
+        best_checkpoint = args.cp_filepath + best_checkpoints()['0_0']
     print(f".. best checkpoint was: {best_checkpoint}")
 
     new_config = deepcopy(old_config)

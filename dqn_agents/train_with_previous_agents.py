@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    best_checkpoint = best_checkpoints(args.cp_filepath)[args.checkpoint]
+    best_checkpoint = args.cp_filepath + best_checkpoints()[args.checkpoint]
     training_checkpoints = []
 
     for _ in range(args.repetitions):

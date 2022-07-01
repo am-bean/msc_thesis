@@ -85,7 +85,7 @@ if __name__ == "__main__":
     weights_list = {}
     for checkpoint in checkpoints_list:
         # Restore all policies from checkpoint.
-        dummy_trainer.restore(best_checkpoints(args.cp_filepath)[checkpoint])
+        dummy_trainer.restore(args.cp_filepath + best_checkpoints()[checkpoint])
         # Get trained weights
         trained_weights = dummy_trainer.get_weights()
         # Set all the weights to the trained agent weights
