@@ -1,6 +1,8 @@
 
 
+
 def best_checkpoints(filepath):
+
     checkpoints = {
         '0_0': filepath + "DQN_cards_ab6b7_00000_0_2022-05-28_07-30-30/checkpoint_001000/checkpoint-1000",
         '4_8': filepath + 'DQN_cards_eb25a_00000_0_2022-06-22_23-09-00\checkpoint_005000\checkpoint-5000',
@@ -11,7 +13,7 @@ def best_checkpoints(filepath):
         'l2_0': filepath + 'DQN_cards_4d039_00000_0_2022-06-25_16-34-28\checkpoint_040000\checkpoint-40000',
         'l2_1': filepath + 'DQN_cards_42c48_00000_0_2022-06-25_19-18-49\checkpoint_040000\checkpoint-40000',
         'l2_2': filepath + 'DQN_cards_f2869_00000_0_2022-06-25_21-03-57\checkpoint_040000\checkpoint-40000',
-        'l2_3': filepath + 'DQN_cards_3d870_00000_0_2022-06-26_05-55-46\checkpoint_040000\checkpoint-40000',
+        'l2_3': filepath + 'DQN_cards_4c0f7_00000_0_2022-07-01_09-22-15\checkpoint_040000\checkpoint-40000',
         'l3_0': filepath + 'DQN_cards_0df60_00000_0_2022-06-26_15-27-06\checkpoint_040000\checkpoint-40000',
         'l3_1': filepath + 'DQN_cards_25fc2_00000_0_2022-06-26_18-48-12\checkpoint_040000\checkpoint-40000',
         'l3_2': filepath + 'DQN_cards_f118d_00000_0_2022-06-26_20-34-06\checkpoint_040000\checkpoint-40000',
@@ -19,9 +21,11 @@ def best_checkpoints(filepath):
         'l3_4': filepath + 'DQN_cards_67cc8_00000_0_2022-06-27_00-12-10\checkpoint_040000\checkpoint-40000',
         'l4_0': filepath + 'DQN_cards_5aacb_00000_0_2022-06-26_11-45-15\checkpoint_040000\checkpoint-40000',
         'l5_0': filepath + 'DQN_cards_c3fa9_00000_0_2022-06-27_05-36-52\checkpoint_040000\checkpoint-40000',
+        'l5_1': filepath + 'DQN_cards_deadc_00000_0_2022-07-01_08-36-15\checkpoint_040000\checkpoint-40000',
+        'l6_0': filepath + 'DQN_cards_413d8_00000_0_2022-06-29_19-18-28\checkpoint_040000\checkpoint-40000',
         'l6_1': filepath + 'DQN_cards_94ca4_00000_0_2022-06-30_10-15-35\checkpoint_040000\checkpoint-40000',
         'l6_2': filepath + 'DQN_cards_932f7_00000_0_2022-07-01_08-48-27\checkpoint_040000\checkpoint-40000',
-        'l7_0': filepath + 'DQN_cards_9ebd9_00000_0_2022-06-26_22-24-14\checkpoint_040000\checkpoint-40000',
+        'l7_0': filepath + 'DQN_cards_b1ef9_00000_0_2022-07-01_09-46-35\checkpoint_040000\checkpoint-40000',
         'l8_0': filepath + 'DQN_cards_f2086_00000_0_2022-06-27_04-38-48\checkpoint_040000\checkpoint-40000',
 
     }

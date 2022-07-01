@@ -4,7 +4,6 @@ import os
 import platform
 import argparse
 from copy import deepcopy
-import multiprocessing
 
 import ray
 from ray import tune
@@ -103,8 +102,6 @@ if __name__ == "__main__":
             config=new_config,
             checkpoint_freq=1000,
             reuse_actors=True,
-            local_dir='',
-            # max_concurrent_trials=1000,
             verbose=1
         )
 
@@ -122,4 +119,4 @@ if __name__ == "__main__":
     machine = platform.uname()[1]
 
     if machine != 'AndrewXPS15':
-        os.shutdown()
+        os.system("shutdown /s /t 30")
