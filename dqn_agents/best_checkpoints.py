@@ -27,6 +27,7 @@ def best_checkpoints(filepath):
         'l6_2': filepath + 'DQN_cards_932f7_00000_0_2022-07-01_08-48-27\checkpoint_040000\checkpoint-40000',
         'l7_0': filepath + 'DQN_cards_b1ef9_00000_0_2022-07-01_09-46-35\checkpoint_040000\checkpoint-40000',
         'l8_0': filepath + 'DQN_cards_f2086_00000_0_2022-06-27_04-38-48\checkpoint_040000\checkpoint-40000',
+        'l8_1': filepath + 'DQN_cards_f2724_00000_0_2022-07-01_09-48-23\checkpoint_040000\checkpoint-40000'
 
     }
 
