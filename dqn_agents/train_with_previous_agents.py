@@ -4,7 +4,6 @@ import os
 import platform
 import argparse
 from copy import deepcopy
-import multiprocessing
 
 import ray
 from ray import tune
