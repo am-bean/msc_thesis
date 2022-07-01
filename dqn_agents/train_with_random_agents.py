@@ -2,7 +2,9 @@ import os
 from copy import deepcopy
 
 import numpy as np
+import platform
 import ray
+import argparse
 from ray import tune
 from ray.rllib.env import PettingZooEnv
 from ray.rllib.models import ModelCatalog
@@ -16,7 +18,15 @@ from dqn_agents import cards_env
 
 torch, nn = try_import_torch()
 
+
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--stop-iters", type=int, default=40000)
+
 if __name__ == "__main__":
+
+    args = parser.parse_args()
 
     ray.shutdown()
     alg_name = "DQN"
@@ -53,7 +63,7 @@ if __name__ == "__main__":
     ray.init(num_cpus=num_cpus)
 
     results = tune.run('DQN',
-             stop={"training_iteration": 40000},
+             stop={"training_iteration": args.stop_iters},
              checkpoint_freq=1000,
              config=config,
              )
@@ -63,3 +73,8 @@ if __name__ == "__main__":
     print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
 
     ray.shutdown()
+
+    machine = platform.uname()[1]
+
+    if machine != 'AndrewXPS15':
+        os.system("shutdown /s /t 30")

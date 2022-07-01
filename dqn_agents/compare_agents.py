@@ -1,6 +1,7 @@
 """Loads a pre-trained agent to play a demo game
 """
 
+import argparse
 from copy import deepcopy
 
 import ray
@@ -19,9 +20,29 @@ from mask_dqn_model import default_config
 
 torch, nn = try_import_torch()
 
-if __name__ == "__main__":
+parser = argparse.ArgumentParser()
 
-    ray.init(num_cpus=4)
+parser.add_argument("--num-iters", type=int, default=1000)
+parser.add_argument("--num-cpus", type=int, default=4)
+parser.add_argument("--first-checkpoint", type=str, default='0_0')
+parser.add_argument("--second_checkpoint", type=str, default='0_0')
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
+
+
+if __name__ == "__main__":
+    '''Takes two pre-trained checkpoints and compares their performance competing head to head.
+    DANGER: The random seed does not produce identical results. Unsure why not.
+    
+    Args:
+    num-iters: int, how many games to play for the test
+    num-cpus: int, how many CPUs to request with Ray
+    first-checkpoint: str, the first checkpoint for testing
+    second-checkpoint: str, the second checkpoint for testing
+    '''
+
+    args = parser.parse_args()
+
+    ray.init(num_cpus=args.num_cpus)
 
     # Get obs- and action Spaces.
     def env_creator():
@@ -52,8 +73,8 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    first_checkpoint = best_checkpoints()['l2_0']
-    second_checkpoint = best_checkpoints()['0_0']
+    first_checkpoint = best_checkpoints(args.cp_filepath)[args.first_checkpoint]
+    second_checkpoint = best_checkpoints(args.cp_filepath)[args.second_checkpoint]
 
     second_config = deepcopy(first_config)
     second_config["multiagent"] = {
@@ -83,9 +104,9 @@ if __name__ == "__main__":
     new_trainer.set_weights({pid: first_trained_weights['player_0'] for pid in use_first_trained})
     new_trainer.set_weights({pid: second_trained_weights['player_0'] for pid in use_second_trained})
 
+    # Loop over games to collect results
     cum_rewards = {'player_0': 0, 'player_1': 0, 'player_2': 0, 'player_3': 0}
-    for i in range(5000):
-        # run until episode ends
+    for i in range(args.num_iters):
         done = False
         my_env.seed(i)
         obs = my_env.reset()
@@ -97,7 +118,7 @@ if __name__ == "__main__":
             done = dones['__all__']
         for player, reward in reward.items():
             cum_rewards[player] += reward
-        if i%1000 == 999:
+        if i%(args.num_iters//5) == (args.num_iters//5)-1:
             print(cum_rewards)
 
     ray.shutdown()

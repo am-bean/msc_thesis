@@ -1,8 +1,10 @@
 """Loads a previously trained set of agents and then continues to train one of them.
 """
-
+import os
+import platform
 import argparse
 from copy import deepcopy
+import multiprocessing
 
 import ray
 from ray import tune
@@ -24,17 +26,20 @@ torch, nn = try_import_torch()
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=40000)
-parser.add_argument("--num-cpus", type=int, default=2)
+parser.add_argument("--num-cpus", type=int, default=4)
+parser.add_argument("--checkpoint", type=str, default='l2_0')
+parser.add_argument("--repetitions", type=int, default=1)
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
 
 if __name__ == "__main__":
 
-    best_checkpoint = best_checkpoints()['l2_0']
-    training_checkpoints = []
-
     args = parser.parse_args()
 
-    for iters in range(4):
-        ray.init(num_cpus=4)
+    best_checkpoint = best_checkpoints(args.cp_filepath)[args.checkpoint]
+    training_checkpoints = []
+
+    for _ in range(args.repetitions):
+        ray.init(num_cpus=args.num_cpus)
 
         # Get obs- and action Spaces.
         def env_creator():
@@ -98,6 +103,7 @@ if __name__ == "__main__":
             config=new_config,
             checkpoint_freq=1000,
             reuse_actors=True,
+            local_dir='',
             # max_concurrent_trials=1000,
             verbose=1
         )
@@ -113,3 +119,7 @@ if __name__ == "__main__":
         best_checkpoint = cp
 
     print(training_checkpoints)
+    machine = platform.uname()[1]
+
+    if machine != 'AndrewXPS15':
+        os.system("shutdown /s /t 30")
