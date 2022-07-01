@@ -14,7 +14,7 @@ from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
 
 import cards_env
-from best_checkpoints import best_checkpoints
+from best_checkpoints import best_checkpoints, update_best_checkpoints
 from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
@@ -112,7 +112,12 @@ if __name__ == "__main__":
 
         ray.shutdown()
 
-        training_checkpoints.append(cp)
+        old_cp = args.checkpoint
+        new_cp = old_cp[:-1] + str(int(old_cp[-1])+1)
+        file = cp.replace(args.cp_filepath, "")
+        update_best_checkpoints(file, new_cp)
+
+        training_checkpoints.append(file)
         best_checkpoint = cp
 
     print(training_checkpoints)
