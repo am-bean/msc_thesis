@@ -1,4 +1,5 @@
 dm_tree==0.1.7
+gputil==1.4.0
 gym==0.22.0
 lz4==4.0.0
 matplotlib==3.5.2
