@@ -122,4 +122,4 @@ if __name__ == "__main__":
     machine = platform.uname()[1]
 
     if machine != 'AndrewXPS15':
-        os.shutdown()
+        os.system("shutdown /s /t 30")
