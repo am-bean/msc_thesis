@@ -32,6 +32,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-timesteps", type=int, default=15000)
 parser.add_argument("--num-cpus", type=int, default=2)
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
 
 if __name__ == "__main__":
     run_new_model = False
@@ -83,7 +84,7 @@ if __name__ == "__main__":
 
         best_checkpoint = results.get_last_checkpoint(results.trials[0])
     else:
-        best_checkpoint = best_checkpoints()['first_round']
+        best_checkpoint = best_checkpoints(args.cp_filepath)['0_0']
     print(f".. best checkpoint was: {best_checkpoint}")
 
     new_config = deepcopy(old_config)

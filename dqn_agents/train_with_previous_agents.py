@@ -27,14 +27,15 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=40000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=int, default='l2_0')
+parser.add_argument("--checkpoint", type=str, default='l2_0')
 parser.add_argument("--repetitions", type=int, default=1)
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
 
 if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    best_checkpoint = best_checkpoints()[args.checkpoint]
+    best_checkpoint = best_checkpoints(args.cp_filepath)[args.checkpoint]
     training_checkpoints = []
 
     for _ in range(args.repetitions):

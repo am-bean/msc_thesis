@@ -19,14 +19,13 @@ from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
 
-import winsound
-
 torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=5000)
+parser.add_argument("--num-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=2)
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
 
 if __name__ == "__main__":
 
@@ -34,7 +33,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    ray.init(num_cpus=4)
+    ray.init(num_cpus=args.num_cpus)
 
     # Get obs- and action Spaces.
     def env_creator():
@@ -86,13 +85,13 @@ if __name__ == "__main__":
     weights_list = {}
     for checkpoint in checkpoints_list:
         # Restore all policies from checkpoint.
-        dummy_trainer.restore(best_checkpoints()[checkpoint])
+        dummy_trainer.restore(best_checkpoints(args.cp_filepath)[checkpoint])
         # Get trained weights
         trained_weights = dummy_trainer.get_weights()
         # Set all the weights to the trained agent weights
         weights_list[checkpoint] = trained_weights['player_0']
 
-    for i in range(5):
+    for i in range(args.num_iters):
         weights_dict = {}
         shuffle(checkpoints_list)
         for j, pid in enumerate(untrained_weights.keys()):
@@ -120,9 +119,3 @@ if __name__ == "__main__":
 
 
     ray.shutdown()
-
-    winsound.Beep(440, 500)
-    winsound.Beep(880, 500)
-    winsound.Beep(440, 500)
-    winsound.Beep(880, 500)
-    winsound.Beep(440, 500)
