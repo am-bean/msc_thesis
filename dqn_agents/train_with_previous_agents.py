@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=40000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='l1_2')
+parser.add_argument("--checkpoint", type=str, default='l4_1')
 parser.add_argument("--repetitions", type=int, default=1)
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
 
