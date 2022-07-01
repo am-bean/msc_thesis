@@ -1,7 +1,6 @@
 import numpy as np
 
 from copy import deepcopy
-import multiprocessing
 
 from ray.rllib.agents.dqn.dqn_torch_model import DQNTorchModel
 from ray.rllib.agents.registry import get_trainer_class
