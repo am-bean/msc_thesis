@@ -1,7 +1,7 @@
 
 
 def best_checkpoints():
-    filepath = "C:/Users/Andre/ray_results/DQN/"
+    filepath = '//tsclient/C/Users/Andre/ray_results/DQN/'
     checkpoints = {
         '0_0': filepath + "DQN_cards_ab6b7_00000_0_2022-05-28_07-30-30/checkpoint_001000/checkpoint-1000",
         '1_1': filepath + "DQN_cards_ab6b7_00000_0_2022-05-28_07-30-30/checkpoint_033000/checkpoint-33000",
@@ -62,6 +62,8 @@ def best_checkpoints():
         'l3_3': filepath + 'DQN_cards_031c8_00000_0_2022-06-26_22-21-58\checkpoint_040000\checkpoint-40000',
         'l3_4': filepath + 'DQN_cards_67cc8_00000_0_2022-06-27_00-12-10\checkpoint_040000\checkpoint-40000',
         'l5_0': filepath + 'DQN_cards_c3fa9_00000_0_2022-06-27_05-36-52\checkpoint_040000\checkpoint-40000',
+        'l6_0': filepath + 'DQN_cards_413d8_00000_0_2022-06-29_19-18-28\checkpoint_040000\checkpoint-40000',
+        'l6_1': filepath + 'DQN_cards_94ca4_00000_0_2022-06-30_10-15-35\checkpoint_040000\checkpoint-40000',
 
     }
     return checkpoints
