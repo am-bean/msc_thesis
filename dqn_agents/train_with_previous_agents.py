@@ -102,8 +102,6 @@ if __name__ == "__main__":
             config=new_config,
             checkpoint_freq=1000,
             reuse_actors=True,
-            local_dir='',
-            # max_concurrent_trials=1000,
             verbose=1
         )
 
