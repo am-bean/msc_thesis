@@ -113,8 +113,9 @@ if __name__ == "__main__":
         ray.shutdown()
 
         old_cp = args.checkpoint
-        new_cp = old_cp[:-1] + str(int(old_cp[-1])+1)
-        file = cp.replace(args.cp_filepath, "")
+        new_cp = old_cp[:-1] + str(int(old_cp[-1]) + 1)
+        filepath = args.cp_filepath.replace('/', '\\')
+        file = cp.local_path.replace(filepath, "")
         update_best_checkpoints(file, new_cp)
 
         training_checkpoints.append(file)
