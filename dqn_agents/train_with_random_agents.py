@@ -1,7 +1,6 @@
 import os
 from copy import deepcopy
 import shutil
-import winshell
 
 import numpy as np
 import platform
@@ -24,11 +23,11 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=40000)
 parser.add_argument("--checkpoint-freq", type=int, default=10000)
-parser.add_argument("--run-id", type=str, default='l1_0')
+parser.add_argument("--run-id", type=str, default='l2_0')
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
 parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
 parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_040000/checkpoint-40000')
-parser.add_argument('--shutdown', type=bool, default=False)
+parser.add_argument('--shutdown', type=bool, default=True)
 
 if __name__ == "__main__":
 
