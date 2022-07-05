@@ -1,6 +1,7 @@
 """Loads a previously trained set of agents and then continues to train one of them.
 """
 import os
+import shutil
 import platform
 import argparse
 from copy import deepcopy
@@ -24,11 +25,14 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=40000)
+parser.add_argument("--stop-iters", type=int, default=1)
+parser.add_argument('--checkpoint_freq', type=int, default=1)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='l7_3')
-parser.add_argument("--repetitions", type=int, default=1)
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
+parser.add_argument("--checkpoint", type=str, default='test0')
+parser.add_argument("--repetitions", type=int, default=4)
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
+parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
+
 
 if __name__ == "__main__":
 
@@ -37,7 +41,7 @@ if __name__ == "__main__":
     best_checkpoint = args.cp_filepath + best_checkpoints()[args.checkpoint]
     training_checkpoints = []
 
-    for _ in range(args.repetitions):
+    for i in range(args.repetitions):
         ray.init(num_cpus=args.num_cpus)
 
         # Get obs- and action Spaces.
@@ -100,29 +104,37 @@ if __name__ == "__main__":
             "DQN",
             stop={"training_iteration": args.stop_iters},
             config=new_config,
-            checkpoint_freq=1000,
+            checkpoint_freq=args.checkpoint_freq,
             reuse_actors=True,
             verbose=1
         )
 
         cp = results.get_last_checkpoint(results.trials[0])
-        print(f'The checkpoint string below needs to be added to the best_checkpoints file')
-        print(f'Then update the variable at the top of this file to the next number e.g. 5_2 and run it again')
-        print(f'Last checkpoint: {cp}')
 
         ray.shutdown()
 
         old_cp = args.checkpoint
-        new_cp = old_cp[:-1] + str(int(old_cp[-1]) + 1)
+        new_cp = old_cp[:-1] + str(int(old_cp[-1]) + 1 + i)
         filepath = args.cp_filepath.replace('/', '\\')
         file = cp.local_path.replace(filepath, "")
+        checkpoint_name = args.checkpoint_name
+        folder = cp.local_path.replace(checkpoint_name.replace('/', '\\'), "")
+        folder_only = folder.replace(filepath, "")
         update_best_checkpoints(file, new_cp)
 
         training_checkpoints.append(file)
         best_checkpoint = cp
 
-    print(training_checkpoints)
     machine = platform.uname()[1]
 
     if machine != 'AndrewXPS15':
+        src_folder = folder
+        dst_folder = args.local_folder + '\\' + folder_only
+        # Using try to protect against the connection to the remote server dropping
+        try:
+            shutil.copytree(src_folder, dst_folder)
+        except:
+            pass
         os.system("shutdown /s /t 1")
+    else:
+        print(training_checkpoints)

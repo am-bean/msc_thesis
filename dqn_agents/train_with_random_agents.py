@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=1)
 parser.add_argument("--checkpoint-freq", type=int, default=1)
-parser.add_argument("--run-id", type=str, default='test')
+parser.add_argument("--run-id", type=str, default='test0')
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
 parser.add_argument('--local-folder', type=str, default="C:/Users/Andre/ray_results/DQN/aws")
 parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
@@ -82,14 +82,11 @@ if __name__ == "__main__":
     file = cp.local_path.replace(filepath, "")
     checkpoint_name = args.checkpoint_name
     folder = cp.local_path.replace(checkpoint_name.replace('/', '\\'), "")
-    print(folder)
     folder_only = folder.replace(filepath, "")
     update_best_checkpoints(file, args.run_id)
 
     machine = platform.uname()[1]
     if machine == 'AndrewXPS15':
-        print(f'The checkpoint string below needs to be added to the best_checkpoints file')
-        print('After this one switch to the previous agents file')
         print(f'Last checkpoint: {file}')
 
     else:
