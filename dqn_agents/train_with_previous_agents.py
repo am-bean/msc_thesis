@@ -25,13 +25,15 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=1)
-parser.add_argument('--checkpoint_freq', type=int, default=1)
+parser.add_argument("--stop-iters", type=int, default=40000)
+parser.add_argument('--checkpoint_freq', type=int, default=10000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='test0')
+parser.add_argument("--checkpoint", type=str, default='l1_0')
 parser.add_argument("--repetitions", type=int, default=4)
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
-parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
+parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
+parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_040000/checkpoint-40000')
+parser.add_argument('--shutdown', type=bool, default=True)
 
 
 if __name__ == "__main__":
@@ -106,7 +108,7 @@ if __name__ == "__main__":
             config=new_config,
             checkpoint_freq=args.checkpoint_freq,
             reuse_actors=True,
-            verbose=1
+            verbose=0
         )
 
         cp = results.get_last_checkpoint(results.trials[0])
@@ -125,16 +127,20 @@ if __name__ == "__main__":
         training_checkpoints.append(file)
         best_checkpoint = cp
 
-    machine = platform.uname()[1]
+        machine = platform.uname()[1]
+        if machine != 'AndrewXPS15':
+            src_folder = folder
+            dst_folder = args.local_folder + '/' + folder_only
+            dst_folder = dst_folder.replace('/', '\\')
+            # Using try to protect against the connection to the remote server dropping
+            try:
+                shutil.copytree(src_folder, "\\" + dst_folder)
+                print(f'Copied to {dst_folder}')
+            except:
+                pass
 
     if machine != 'AndrewXPS15':
-        src_folder = folder
-        dst_folder = args.local_folder + '\\' + folder_only
-        # Using try to protect against the connection to the remote server dropping
-        try:
-            shutil.copytree(src_folder, dst_folder)
-        except:
-            pass
-        os.system("shutdown /s /t 1")
+        if args.shutdown:
+            os.system("shutdown /s /t 30")
     else:
         print(training_checkpoints)
