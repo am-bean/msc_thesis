@@ -1,6 +1,7 @@
 import os
 from copy import deepcopy
 import shutil
+import winshell
 
 import numpy as np
 import platform
@@ -17,19 +18,17 @@ from dqn_agents.mask_dqn_model import TorchMaskedActions, MaskedRandomPolicy, de
 
 from dqn_agents import cards_env
 
-
 torch, nn = try_import_torch()
-
-
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=1)
-parser.add_argument("--checkpoint-freq", type=int, default=1)
-parser.add_argument("--run-id", type=str, default='test0')
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
-parser.add_argument('--local-folder', type=str, default="C:/Users/Andre/ray_results/DQN/aws")
-parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
+parser.add_argument("--stop-iters", type=int, default=40000)
+parser.add_argument("--checkpoint-freq", type=int, default=10000)
+parser.add_argument("--run-id", type=str, default='l1_0')
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
+parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
+parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_040000/checkpoint-40000')
+parser.add_argument('--shutdown', type=bool, default=False)
 
 if __name__ == "__main__":
 
@@ -73,6 +72,7 @@ if __name__ == "__main__":
              stop={"training_iteration": args.stop_iters},
              checkpoint_freq=args.checkpoint_freq,
              config=config,
+             verbose=0
              )
 
     ray.shutdown()
@@ -91,10 +91,19 @@ if __name__ == "__main__":
 
     else:
         src_folder = folder
-        dst_folder = args.local_folder + '\\' + folder_only
+        dst_folder = args.local_folder + '/' + folder_only
+        dst_folder = dst_folder.replace('/', '\\')
         # Using try to protect against the connection to the remote server dropping
         try:
-            shutil.copytree(src_folder, dst_folder)
-        except:
+            shutil.copytree(src_folder, "\\" + dst_folder)
+            print(f"Copied to {dst_folder}")
+        finally:
             pass
-        os.system("shutdown /s /t 30")
+        unneeded_files = ['params.json', 'params.pkl', 'progress.csv', 'result.json']
+        for f in unneeded_files:
+            try:
+                os.remove(folder + '/' + f)
+            finally:
+                pass
+        if args.shutdown:
+            os.system("shutdown /s /t 30")

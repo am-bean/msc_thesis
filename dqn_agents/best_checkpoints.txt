@@ -1,1 +1,1 @@
-{}
+{"test0": "DQN_cards_b3817_00000_0_2022-07-05_14-56-51\\checkpoint_000001\\checkpoint-1"}
