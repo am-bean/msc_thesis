@@ -1,1 +1,2 @@
 {"l6_0": "DQN_cards_f9500_00000_0_2022-07-05_15-41-45\\checkpoint_040000\\checkpoint-40000", "l6_1": "DQN_cards_d85b2_00000_0_2022-07-05_18-39-47\\checkpoint_040000\\checkpoint-40000"}
+
