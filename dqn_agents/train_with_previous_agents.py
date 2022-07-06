@@ -28,8 +28,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--stop-iters", type=int, default=40000)
 parser.add_argument('--checkpoint_freq', type=int, default=10000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='l1_0')
-parser.add_argument("--repetitions", type=int, default=4)
+parser.add_argument("--checkpoint", type=str, default='l8_1')
+parser.add_argument("--repetitions", type=int, default=3)
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
 parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
 parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_040000/checkpoint-40000')
@@ -138,6 +138,12 @@ if __name__ == "__main__":
                 print(f'Copied to {dst_folder}')
             except:
                 pass
+            unneeded_files = ['params.json', 'params.pkl', 'progress.csv', 'result.json']
+            for f in unneeded_files:
+                try:
+                    os.remove(folder + '/' + f)
+                finally:
+                    pass
 
     if machine != 'AndrewXPS15':
         if args.shutdown:
