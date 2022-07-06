@@ -1,1 +1,2 @@
-{"test0": "DQN_cards_b3817_00000_0_2022-07-05_14-56-51\\checkpoint_000001\\checkpoint-1", "l5_0": "DQN_cards_e8b91_00000_0_2022-07-05_15-34-07\\checkpoint_040000\\checkpoint-40000", "l5_1": "DQN_cards_e4afa_00000_0_2022-07-05_18-32-58\\checkpoint_040000\\checkpoint-40000"}
+{"l5_0": "DQN_cards_e8b91_00000_0_2022-07-05_15-34-07\\checkpoint_040000\\checkpoint-40000", "l5_1": "DQN_cards_e4afa_00000_0_2022-07-05_18-32-58\\checkpoint_040000\\checkpoint-40000"}
+
