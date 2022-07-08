@@ -102,24 +102,28 @@ class RuleBasedPolicy(RandomPolicy):
 
             # Lead will not be returned if the agent itself has the lead
             if not lead_player:
+                # Choose a random action
+                # Notably, leading aces performs much better than random actions, but
+                return np.random.choice(legal_actions)
                 # If holding any aces
-                if any((legal_actions % 6) == 5):
-                    aces = legal_actions[(legal_actions % 6 == 5)]
-                    same_suits = [((legal_actions // 6) == (suit // 6)).sum() for suit in aces]
+                #if any((legal_actions % 6) == 5):
+                #    aces = legal_actions[(legal_actions % 6 == 5)]
+                #    same_suits = [((legal_actions // 6) == (suit // 6)).sum() for suit in aces]
                     # Choose the ace with the least cards beneath it to reduce chance of getting trumped
-                    return aces[np.argmin(same_suits)]
+                #    return aces[np.argmin(same_suits)]
                 # If no aces, play the non-trump card with the most cards in play under it
-                else:
-                    undermined_cards = np.array([len(
-                        played_cards[np.all([(played_cards < card), ((played_cards // 6) == (card // 6))], axis=0)]) for
-                                                 card in legal_actions])
-                    self_undermined_cards = np.array([len(
-                        legal_actions[np.all([(legal_actions < card), ((legal_actions // 6) == (card // 6))], axis=0)])
-                                                      for card in legal_actions])
-                    undermined_cards += self_undermined_cards
-                    card_values = np.array([card % 6 for card in legal_actions])
-                    cards_beneath = card_values - undermined_cards
-                    return legal_actions[cards_beneath.argmax()]
+                #else:
+                    #undermined_cards = np.array([len(
+                    #    played_cards[np.all([(played_cards < card), ((played_cards // 6) == (card // 6))], axis=0)]) for
+                    #                             card in legal_actions])
+                    #self_undermined_cards = np.array([len(
+                    #    legal_actions[np.all([(legal_actions < card), ((legal_actions // 6) == (card // 6))], axis=0)])
+                    #                                  for card in legal_actions])
+                    #undermined_cards += self_undermined_cards
+                    #card_values = np.array([card % 6 for card in legal_actions])
+                    #cards_beneath = card_values - undermined_cards
+                    #return legal_actions[cards_beneath.argmax()]
+                    #return np.random.choice(legal_actions)
             else:
                 played_this_trick = [o[current_round, :].nonzero()[0] for o in player_obs]
                 winning, winning_card = trick_winner(played_this_trick)
@@ -153,9 +157,9 @@ class RuleBasedPolicy(RandomPolicy):
                             # If agent is going last, play lowest winning card
                             if n_played == 3:
                                 return legal_actions[legal_actions > winning_card].min()
-                            # Otherwise play the highest winning card
+                            # Otherwise play a winning card at random
                             else:
-                                return legal_actions.max()
+                                return np.random.choice(legal_actions[legal_actions > winning_card]) #legal_actions.max()
                         # If winning is not possible, play the lowest possible card
                         else:
                             return legal_actions.min()
