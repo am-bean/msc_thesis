@@ -26,7 +26,7 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=40000)
+parser.add_argument("--stop-iters", type=int, default=1)
 parser.add_argument('--checkpoint_freq', type=int, default=10000)
 parser.add_argument("--num-cpus", type=int, default=4)
 parser.add_argument("--repetitions", type=int, default=6)
@@ -34,12 +34,22 @@ parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/r
 parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
 parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_040000/checkpoint-40000')
 parser.add_argument('--shutdown', type=bool, default=True)
+parser.add_argument('--use-checkpoints', type=bool, default=True)
 
 if __name__ == "__main__":
 
     checkpoints_pool = ['l1_4', 'l2_4', 'l3_4', 'l4_4']
 
     args = parser.parse_args()
+
+    subs = {'a': '\checkpoint_010000\checkpoint-10000',
+            'b': '\checkpoint_020000\checkpoint-20000',
+            'c': '\checkpoint_030000\checkpoint-30000'}
+
+    if args.use_checkpoints:
+        for checkpoint in checkpoints_pool:
+            for sub in subs.keys():
+                checkpoints_pool.append(checkpoint + sub)
 
     # Get obs- and action Spaces.
     def env_creator():
@@ -96,7 +106,11 @@ if __name__ == "__main__":
         weights_list = {}
         for checkpoint in checkpoints_pool:
             # Restore all policies from checkpoint.
-            dummy_trainer.restore(args.cp_filepath + best_checkpoints()[checkpoint])
+            if checkpoint[-1] in subs.keys():
+                long_checkpoint = best_checkpoints()[checkpoint].replace('\checkpoint_040000\checkpoint-40000', subs[checkpoint[-1]])
+            else:
+                long_checkpoint = best_checkpoints()[checkpoint]
+            dummy_trainer.restore(args.cp_filepath + long_checkpoint)
             # Get trained weights
             trained_weights = dummy_trainer.get_weights()
             # Set all the weights to the trained agent weights

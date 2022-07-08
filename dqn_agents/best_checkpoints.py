@@ -1,3 +1,4 @@
+import gc
 import json
 
 
@@ -5,6 +6,7 @@ def best_checkpoints():
 
     with open('best_checkpoints.txt', 'r') as f:
         checkpoints = json.loads(f.read())
+    f.close()
 
     return checkpoints
 
