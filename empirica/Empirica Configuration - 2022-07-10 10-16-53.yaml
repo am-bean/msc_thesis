@@ -1,0 +1,111 @@
+treatments:
+  - name: pop
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - RrLm4u9fp9NzytEzd
+      - Q7bKTC87PQNjfNfmn
+      - zfz7GdhAfKb3K5vRm
+      - egYWr3FhDvwim8B8z
+  - name: pool
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - RrLm4u9fp9NzytEzd
+      - Q7bKTC87PQNjfNfmn
+      - zfz7GdhAfKb3K5vRm
+      - Mb8Q4C8Y9XKEfY9iv
+  - name: self
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - RrLm4u9fp9NzytEzd
+      - Q7bKTC87PQNjfNfmn
+      - zfz7GdhAfKb3K5vRm
+      - 6yzAqSErDMxegCtr2
+  - name: rule
+    factorIds:
+      - fXPTZpBnxsxuotxh6
+      - RrLm4u9fp9NzytEzd
+      - Q7bKTC87PQNjfNfmn
+      - zfz7GdhAfKb3K5vRm
+      - RijZs6hPf9grrRxj7
+factorTypes:
+  - _id: jTXNCATMbGyw2uo9J
+    name: playerCount
+    description: The Number of players participating in the given game.
+    required: true
+    type: Integer
+    min: 1
+  - _id: ZRZ6Cj3NziZauB3bA
+    name: roundCount
+    description: Number of rounds played
+    required: false
+    type: Integer
+    min: 1
+    max: 100
+  - _id: Jroupzjefq85xtNGj
+    name: stageLength
+    description: Number of seconds in stage
+    required: false
+    type: Integer
+    min: 1
+    max: 12000
+  - _id: 4q2RSFfsrB3oFRTu6
+    name: botsCount
+    description: Number of bots
+    required: false
+    type: Integer
+    min: 0
+    max: 100
+  - _id: cJwPxezMi85S8vLtw
+    name: agentOrder
+    description: Which agent should be tested in what order
+    required: false
+    type: String
+    min: 1
+    max: 5
+factors:
+  - _id: fXPTZpBnxsxuotxh6
+    name: four
+    value: 4
+    factorTypeId: jTXNCATMbGyw2uo9J
+  - _id: Q7bKTC87PQNjfNfmn
+    name: normal
+    value: 120
+    factorTypeId: Jroupzjefq85xtNGj
+  - _id: sCsrr2mz5qdeCGS4T
+    name: long
+    value: 1200
+    factorTypeId: Jroupzjefq85xtNGj
+  - _id: 2zkyc3vkB5t4umaR7
+    name: one
+    value: 1
+    factorTypeId: 4q2RSFfsrB3oFRTu6
+  - _id: zfz7GdhAfKb3K5vRm
+    name: three
+    value: 3
+    factorTypeId: 4q2RSFfsrB3oFRTu6
+  - _id: 6yzAqSErDMxegCtr2
+    name: selfPlayFirst
+    value: sppr
+    factorTypeId: cJwPxezMi85S8vLtw
+  - _id: Mb8Q4C8Y9XKEfY9iv
+    name: poolPlayFirst
+    value: psrp
+    factorTypeId: cJwPxezMi85S8vLtw
+  - _id: RijZs6hPf9grrRxj7
+    name: rulePlayFirst
+    value: rspp
+    factorTypeId: cJwPxezMi85S8vLtw
+  - _id: egYWr3FhDvwim8B8z
+    name: popPlayFirst
+    value: prps
+    factorTypeId: cJwPxezMi85S8vLtw
+  - _id: RrLm4u9fp9NzytEzd
+    name: four
+    value: 4
+    factorTypeId: ZRZ6Cj3NziZauB3bA
+lobbyConfigs:
+  - name: long
+    timeoutType: lobby
+    timeoutInSeconds: 12000
+    timeoutStrategy: fail
+    gameLobbyIds: []
