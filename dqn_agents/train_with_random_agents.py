@@ -1,22 +1,37 @@
 import os
 from copy import deepcopy
+import shutil
 
 import numpy as np
+import platform
 import ray
+import argparse
 from ray import tune
-from ray.rllib.agents.registry import get_agent_class
 from ray.rllib.env import PettingZooEnv
 from ray.rllib.models import ModelCatalog
 from ray.rllib.utils.framework import try_import_torch
 from ray.tune.registry import register_env
 
+from dqn_agents.best_checkpoints import update_best_checkpoints
 from dqn_agents.mask_dqn_model import TorchMaskedActions, MaskedRandomPolicy, default_config
 
 from dqn_agents import cards_env
 
 torch, nn = try_import_torch()
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--stop-iters", type=int, default=1)
+parser.add_argument("--checkpoint-freq", type=int, default=1)
+parser.add_argument("--run-id", type=str, default='0_0')
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
+parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
+parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
+parser.add_argument('--shutdown', type=bool, default=True)
+
 if __name__ == "__main__":
+
+    args = parser.parse_args()
 
     ray.shutdown()
     alg_name = "DQN"
@@ -53,11 +68,41 @@ if __name__ == "__main__":
     ray.init(num_cpus=num_cpus)
 
     results = tune.run('DQN',
-             stop={"timesteps_total": 150000},
-             checkpoint_freq=1000,
+             stop={"training_iteration": args.stop_iters},
+             checkpoint_freq=args.checkpoint_freq,
              config=config,
+             verbose=0
              )
 
-    print(f'Last checkpoint: {results.get_last_checkpoint(results.trials[0])}')
-
     ray.shutdown()
+
+    cp = results.get_last_checkpoint(results.trials[0])
+    filepath = args.cp_filepath.replace('/', '\\')
+    file = cp.local_path.replace(filepath, "")
+    checkpoint_name = args.checkpoint_name
+    folder = cp.local_path.replace(checkpoint_name.replace('/', '\\'), "")
+    folder_only = folder.replace(filepath, "")
+    update_best_checkpoints(file, args.run_id)
+
+    machine = platform.uname()[1]
+    if machine == 'AndrewXPS15':
+        print(f'Last checkpoint: {file}')
+
+    else:
+        src_folder = folder
+        dst_folder = args.local_folder + '/' + folder_only
+        dst_folder = dst_folder.replace('/', '\\')
+        # Using try to protect against the connection to the remote server dropping
+        try:
+            shutil.copytree(src_folder, "\\" + dst_folder)
+            print(f"Copied to {dst_folder}")
+        finally:
+            pass
+        unneeded_files = ['params.json', 'params.pkl', 'progress.csv', 'result.json']
+        for f in unneeded_files:
+            try:
+                os.remove(folder + '/' + f)
+            finally:
+                pass
+        if args.shutdown:
+            os.system("shutdown /s /t 30")

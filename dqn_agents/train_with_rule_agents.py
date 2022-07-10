@@ -16,6 +16,7 @@ from ray.rllib.utils.framework import try_import_torch
 
 import cards_env
 from best_checkpoints import best_checkpoints, update_best_checkpoints
+from dqn_agents.rule_based_policy import RuleBasedPolicy
 from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
@@ -28,8 +29,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--stop-iters", type=int, default=40000)
 parser.add_argument('--checkpoint_freq', type=int, default=10000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='l1_4')
-parser.add_argument("--repetitions", type=int, default=6)
+parser.add_argument("--checkpoint", type=str, default='l4_4')
+parser.add_argument("--repetitions", type=int, default=1)
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
 parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
 parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_040000/checkpoint-40000')
@@ -79,9 +80,9 @@ if __name__ == "__main__":
         new_config["multiagent"] = {
             "policies": {
                 "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-                "player_1": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+                "player_1": (RuleBasedPolicy, obs_space, act_space, {}),
                 "player_2": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-                "player_3": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+                "player_3": (RuleBasedPolicy, obs_space, act_space, {}),
             },
             "policy_mapping_fn": lambda agent_id: agent_id,
             "policies_to_train": ["player_0"],

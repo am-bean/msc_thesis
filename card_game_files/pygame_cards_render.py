@@ -26,7 +26,7 @@ if __name__ == '__main__':
     pygame.init()
 
     # Initialize pretrained model
-    checkpoint = best_checkpoints.best_checkpoints()['3_2']
+    checkpoint = 'C:/Users/Andre/ray_results/DQN/' + best_checkpoints.best_checkpoints()['3_2']
     my_env, trainer = load_pretrained_player(checkpoint)
     obs = my_env.reset()
 

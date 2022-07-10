@@ -52,7 +52,7 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    best_checkpoint = best_checkpoints()['first_round']
+    best_checkpoint = 'C://Users/Andre/ray_results/DQN/' + best_checkpoints()['0_0']
 
     new_config = deepcopy(old_config)
     new_config["multiagent"] = {

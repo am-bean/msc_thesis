@@ -184,12 +184,12 @@ class raw_env(AECEnv):
         self._agent_selector = agent_selector(self.agents)
         self.agent_selection = self._agent_selector.next()
 
-        #Ensure relevant information is updated
+        # Ensure relevant information is updated
         for i in self.agents:
             self.__update_action_mask(i)
             self.__update_observation(i)
-            #obs = self.observe(i)
-        #tensorboardprint('finished reset')
+            # obs = self.observe(i)
+        # tensorboardprint('finished reset')
 
     def step(self, action):
         """
@@ -203,10 +203,10 @@ class raw_env(AECEnv):
         And any internal state used by observe() or render()
         """
 
-
         one_hot_action = NONE.copy()
         one_hot_action[0, action] = 1
         agent = self.agent_selection
+        this_round = self.current_round
 
         if self.dones[self.agent_selection]:
             # handles stepping an agent which is already done
@@ -221,7 +221,6 @@ class raw_env(AECEnv):
                 self._accumulate_rewards()
             return self._was_done_step(None)
 
-
         # Check for valid moves
         if (sum(self.action_masks[agent]) == 0) and not self.dones[agent]:
             print('No legal moves')
@@ -235,7 +234,7 @@ class raw_env(AECEnv):
         if self.action_masks[agent][action] == 0:
             self.dones = {agent: True for agent in self.agents}
             for i in self.agents:
-                self.rewards[i] = self.tricks_taken[i] + self.current_round/10
+                self.rewards[i] = self.tricks_taken[i] + self.current_round / 10
             self.rewards[agent] = -10 + self.current_round
             self._accumulate_rewards()
             self.illegal_move = True
@@ -254,11 +253,6 @@ class raw_env(AECEnv):
 
         # collect reward if it is the last agent to act per cycle
         if self._agent_selector.is_last():
-            # rewards for all agents are placed in the .rewards dictionary if in the final round
-            if self.current_round == N_ITERS - 1:
-                for i in self.agents:
-                    self.rewards[i] = self.tricks_taken[i]
-
             # Updates the results of the trick
             winning_agent = self.__choose_winner()
             # Increments the winner's tricks taken
@@ -274,12 +268,17 @@ class raw_env(AECEnv):
             self.cards_played = {i: '' for i in self.agents}
 
             self.current_round += 1
-            # The dones dictionary must be updated for all players.
+            # rewards for all agents are placed in the .rewards dictionary if in the final round
+            if self.current_round == N_ITERS:
+                for i in self.agents:
+                    self.rewards[i] = self.tricks_taken[i]
+
+                    # The dones dictionary must be updated for all players.
             self.dones = {i: self.current_round >= N_ITERS for i in self.agents}
 
         # observe the current state
         self.public_info.append(self.cards_played)
-        observation_index = self.agent_name_mapping[agent] * N_ITERS + self.current_round - 1
+        observation_index = self.agent_name_mapping[agent] * N_ITERS + this_round
         self.public_observation[observation_index, action] = 1
         self.private_observations[agent][0, action] = 0
         for i in self.agents:

@@ -19,7 +19,6 @@ from ray.rllib.env import PettingZooEnv
 from ray.rllib.models import ModelCatalog
 from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
-from ray.rllib.agents.registry import get_agent_class
 
 import cards_env
 from best_checkpoints import best_checkpoints
@@ -31,14 +30,16 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-timesteps", type=int, default=15000)
-parser.add_argument("--num-cpus", type=int, default=2)
+parser.add_argument("--stop-timesteps", type=int, default=1)
+parser.add_argument("--num-cpus", type=int, default=4)
+parser.add_argument("--checkpoint", type=str, default='0_0')
+parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
 
 if __name__ == "__main__":
     run_new_model = False
     args = parser.parse_args()
 
-    ray.init(num_cpus=4)
+    ray.init(num_cpus=args.num_cpus)
 
     # Get obs- and action Spaces.
     def env_creator():
@@ -84,7 +85,7 @@ if __name__ == "__main__":
 
         best_checkpoint = results.get_last_checkpoint(results.trials[0])
     else:
-        best_checkpoint = best_checkpoints()['first_round']
+        best_checkpoint = args.cp_filepath + best_checkpoints()[args.checkpoint]
     print(f".. best checkpoint was: {best_checkpoint}")
 
     new_config = deepcopy(old_config)
@@ -120,8 +121,10 @@ if __name__ == "__main__":
         "DQN",
         stop={"timesteps_total": args.stop_timesteps},
         config=new_config,
-        checkpoint_freq=1000,
+        checkpoint_freq=1,
         verbose=1
     )
+
+
 
     ray.shutdown()
