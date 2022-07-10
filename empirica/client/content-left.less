@@ -169,6 +169,12 @@
       border: 1px solid #048B8F;
       color: #048B8F;
     }
+
+    &.alert-neutral {
+      background: #a19c9c;
+      border: 1px solid #757878fb;
+      color: #484b4b;
+    }
   }
 
   .result-score {
@@ -206,6 +212,36 @@
           font-size: 13px;
           line-height: 16px;
         }
+      }
+    }
+  }
+
+  .result-final-score {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid #a7b0ba;
+    border-radius: 10px;
+    height: 85px;
+    width: 100%;
+
+    .result-final-item {
+      display: flex;
+      height: 100%;
+      border-right: 1px solid #a7b0ba;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-wrap: wrap;
+
+
+      .result-final-entry {
+        flex: 0 0 100%;
+        min-width: 100%;
+        color: #000000;
+        font-size: 24px;
+        line-height: 29px;
+        font-weight: 600;
+
       }
     }
   }

@@ -46,13 +46,15 @@ Empirica.onStageStart((game, round, stage) => {
       let card = round.get(`played-${player.get("seat")}`)
       stage.set(`played-${player.get("seat")}`, card)
     }) 
-  } else {
+  } else if (stage.get("type") === "play") {
     game.players.forEach((player) => {
       stage.set(`played-${player.get("seat")}`, null)
       round.set(`played-${player.get("seat")}`, null)
       round.set(`submitted-${player.get("seat")}`, false)
     }) 
     round.set('current-stage', round.get('current-stage') + 1)
+  } else {
+    
   }
 
 });
@@ -85,9 +87,10 @@ Empirica.onStageEnd((game, round, stage) => {
 
     round.set("winner", stage.get("winningSeat"))
     
-    game.players.forEach((player) => {
-      if ((round.get("winner") === player.get("seat")) || (round.get("winner") === player.get("partner"))){
-        player.round.set("score", player.round.get("score") + 1)
+    game.players.forEach((p) => {
+      if ((round.get("winner") === p.get("seat")) || (round.get("winner") === p.get("partner"))){
+        console.log(`Incrementing score for`, p.get("seat"))
+        p.round.set("score", p.round.get("score") + 1)
       }
     })
   }

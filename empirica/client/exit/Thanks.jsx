@@ -11,8 +11,8 @@ export default class Thanks extends React.Component {
       <div className="thanks-page">
         <NonIdealState
           icon={"thumbs-up"}
-          title={submissionCode}
-          description="Thank you for participating!"
+          title={"Thank you for playing!"}
+          description="Close this tab to quit"
           //action={"what is an actions?"}
         />
       </div>

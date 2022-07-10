@@ -70,8 +70,9 @@ export default class TaskResponse extends React.Component {
   };
 
   renderResult() {
-    const { player, round, stage } = this.props;
+    const { game, player, round, stage } = this.props;
     const winner = ((round.get("winner") === player.get("seat")) || (round.get("winner") === player.get("partner")));
+    const opponent = game.players.filter((p) => {return p.get("seat") === player.get("follows");})[0]
 
     return (
       <div className="result">
@@ -92,19 +93,19 @@ export default class TaskResponse extends React.Component {
         <div className="result-item">
             <div className="result-entry label">Played Lead</div>
             <div className="result-entry value">
-              {round.get("lead")}
+              {round.get("lead")} {round.get("lead") === player.get("seat") ? "(You)" : ""} {round.get("lead") === player.get("partner") ? "(Partner)" : ""} 
             </div>
           </div>
           <div className="result-item">
             <div className="result-entry label">Winning Player</div>
             <div className="result-entry value">
-              {round.get("winner")}
+              {round.get("winner")} {round.get("winner") === player.get("seat") ? "(You)" : ""} {round.get("winner") === player.get("partner") ? "(Partner)" : ""} 
             </div>
           </div>
           <div className="result-item last-item">
             <div className="result-entry label">Cumulative Score</div>
             <div className="result-entry value">
-              {player.round.get("score")}
+              {player.round.get("score")} - {opponent.round.get("score")}
             </div>
           </div>
         </div>
@@ -118,6 +119,53 @@ export default class TaskResponse extends React.Component {
       </div>
     );
   }
+
+  renderGameResult() {
+    const { game, player, round, stage } = this.props;
+    const opponent = game.players.filter((p) => {return p.get("seat") === player.get("follows");})[0]
+    const winner = player.round.get("score") > opponent.round.get("score") ;
+    const tie = player.round.get("score") === opponent.round.get("score");
+
+    return (
+      <div className="result">
+        {winner ? (
+          <div className="alert alert-error">
+            <div className="alert-content">
+              <strong>Outcome</strong> Your team won the game!
+            </div>
+          </div>
+        ) : tie ? (
+          <div className="alert alert-neutral">
+            <div className="alert-content">
+              <strong>Outcome</strong> The game resulted in a tie.
+            </div>
+          </div>
+        ) : (
+          <div className="alert">
+            <div className="alert-content">
+              <strong>Outcome</strong> Your team was defeated!
+            </div>
+          </div>
+        )}
+        <div className="result-final-score">
+          <div className="result-final-item">
+            <div className="result-final-entry label">Cumulative Score</div>
+            <div className="result-final-entry value">
+              {player.round.get("score")} - {opponent.round.get("score")}
+            </div>
+          </div>
+        </div>
+        <div className="next-button-box">
+        <input type="button" 
+              className="next-button" 
+              onClick={this.handleNext}
+              value="Start Next Game"
+        ></input>
+        </div>
+      </div>
+    );
+  }
+
 
   renderHand = (playerHand, isDisabled) => {
     const { player, stage } = this.props;
@@ -156,12 +204,18 @@ export default class TaskResponse extends React.Component {
           {this.renderResult()}
         </div>
       );
-    } else {
+    } else if (stage.get("type") === "play") {
       return(
         <div className="response">
           {this.renderPrompt()}
         </div>
+      );
+    } else {
+      return (
+      <div className="response">
+        {this.renderGameResult()}
+      </div>
       )
-    }
+    } 
   }
 }

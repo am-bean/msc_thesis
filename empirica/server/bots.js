@@ -1,4 +1,6 @@
 import Empirica from "meteor/empirica:core";
+import {Position, Toaster} from "@blueprintjs/core";
+
 
 // This is where you add bots, like Bob:
 const ort = require('onnxruntime-node');
@@ -96,7 +98,6 @@ onStageTick(bot, game, round, stage, secondsRemaining) {
 
       const humanPartner = round.get("partner") 
       const modelPath = (humanPartner == bot.get("seat")) ? round.get("partnerModel") : round.get("opponentModel")
-
       this.loadNN(actionMask, obs, modelPath).then(action => 
         {console.log(action)
         stage.set(`played-${bot.get("seat")}`, action);
@@ -119,7 +120,7 @@ onStageTick(bot, game, round, stage, secondsRemaining) {
 
     }
   }
-  if (stage.get("type") === "outcome") {
+  if ((stage.get("type") === "outcome") || (stage.get("type") === "round_outcome")) {
     const cardDetails = round.get(`played-${bot.get("seat")}`);
     stage.set(`played-${bot.get("seat")}`, cardDetails);
     bot.stage.submit();

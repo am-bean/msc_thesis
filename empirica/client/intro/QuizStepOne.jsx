@@ -3,6 +3,7 @@ import React from "react";
 import { Centered } from "meteor/empirica:core";
 
 import Radio from "./Radio";
+
 export default class QuizStepOne extends React.Component {
   state = {
     answer: {
@@ -29,7 +30,7 @@ export default class QuizStepOne extends React.Component {
     event.preventDefault();
     const { answer } = this.state;
 
-    if (answer.value !== "e") {
+    if (answer.value !== "c") {
       this.setState({
         answer: {
           ...answer,
@@ -37,8 +38,7 @@ export default class QuizStepOne extends React.Component {
         },
         toast: {
           show: true,
-          message: "Your answer was incorrect. Without knowing which card " + 
-            "was led, we cannot know which of these cards won.",
+          message: "Your answer was incorrect. When all cards are the same suit, the highest one wins.",
         },
       });
       return;
@@ -57,25 +57,30 @@ export default class QuizStepOne extends React.Component {
     return (
       <Centered className="with-topper">
         <div className="quiz">
-          <h1> Quiz </h1>
+          <br/>
           <p>
-            Having read the instructions, please answer the following question
-            before starting the experiment.
+            Having read the instructions, there are now three questions to ensure
+            that you understand the rules before starting the experiment. You may 
+            go back to the instructions during this quiz.
           </p>
+          <h1> Question 1 </h1>
           {toast.show && (
             <div className="intro-alert alert-error">{toast.message}</div>
           )}
           <form onSubmit={this.handleSubmit}>
             <div>
               <ol className="question">
-                <li
-                  className={`question-list${
-                    answer.error ? " wrong-answer" : ""
-                  }`}
-                >
+
                   <p>
-                    All of the cards listed below are played in a trick. Which one wins?:
+                    All of the cards shown below are played in a trick. Which one wins?
                   </p>
+                  <div className="intro-grid">
+                  <img src="cards/king_of_diamonds.svg" alt="King of Diamonds" />
+                  <img src="cards/queen_of_diamonds.svg" alt="Queen of Diamonds" />
+                  <img src="cards/ace_of_diamonds.svg" alt="Ace of Diamonds" />
+                  <img src="cards/9_of_diamonds.svg" alt="Nine of Diamonds" />
+                  </div>
+                  <br/>
                   <div>
                     <Radio
                       selected={answer.value}
@@ -92,7 +97,7 @@ export default class QuizStepOne extends React.Component {
                       name="answer"
                       value="b"
                       option="b"
-                      label="Queen of Clubs"
+                      label="Queen of Diamonds"
                       onChange={this.handleChange}
                     />
                   </div>
@@ -102,7 +107,7 @@ export default class QuizStepOne extends React.Component {
                       name="answer"
                       value="c"
                       option="c"
-                      label="Ace of Hearts"
+                      label="Ace of Diamonds"
                       onChange={this.handleChange}
                     />
                   </div>
@@ -126,7 +131,7 @@ export default class QuizStepOne extends React.Component {
                       onChange={this.handleChange}
                     />
                   </div>
-                </li>
+
               </ol>
             </div>
             <p className="action-step">

@@ -30,7 +30,7 @@ Empirica.gameInit((game) => {
     player.set("follows", follows[seats[i]])
   });
 
-  const roundCount = game.treatment.roundCount || 3;
+  const roundCount = game.treatment.roundCount || 4;
   const playerCount = game.treatment.playerCount || 4;
   const stageDuration = game.treatment.stageLength || 120;
   const modelStartIndex = game.treatment.partnerIndex || 0;
@@ -65,5 +65,13 @@ Empirica.gameInit((game) => {
       });
       continue;
     }
+    round.addStage({
+      name: `summary_${i}`,
+      displayName: `Game ${i} Outcome`,
+      durationInSeconds: stageDuration,
+      data: {
+        type: "round_outcome",
+      },
+    });
   }
 });

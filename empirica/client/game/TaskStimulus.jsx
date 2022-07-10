@@ -1,11 +1,13 @@
 import React from "react";
 
-const PlayingCard = ({ cardDetails, seat }) => {
+const PlayingCard = ({ cardDetails, seat, player }) => {
   
   const isNull = cardDetails === null
+  const self = player.get("seat") === seat ? "(You)" : ""
+  const partner = player.get("partner") === seat ? "(Partner)" : ""
   return (
     <div className="card-thumb">
-        <strong> {seat} </strong>
+        <strong> {seat} {self} {partner} </strong>
         {!isNull && (  
           <img
           src={`/cards/${cardDetails["rank"]}_of_${cardDetails["suit"]}.svg`}
@@ -36,26 +38,36 @@ export default class TaskStimulus extends React.Component {
     let displayOrder = []
     seats.forEach((s,i) => displayOrder[(i - index + 4) % 4] = s)
 
-    return (
+    return (stage.get("type") === "round_outcome" ? (<br/>) : (
       <div className="cards-table">
         {stage.get("type") === "outcome" ?       
           (<h3>
             These are all the cards played in the past round:
-          </h3>) :
+          </h3>) : ( stage.get("type") === "play" ?
 
-          (<h3>
-            {round.get("winner")} has the lead in this. The following cards have already been played this round:
-          </h3>) 
+          (<div>
+          <h3>
+            The leader this round is: {round.get("winner")} {round.get("winner") === player.get("self") ? "(You)" : ""} {round.get("winner") === player.get("partner") ? "(Partner)" : ""} 
+          </h3>
+          <h3>
+          The following cards have already been played this round:
+          </h3>
+          </div>) : 
+          
+          (<div>
+            <h3>
+              The winners of this game are:
+            </h3>
+            </div>)
+          )
         }
-        <h3>
-          You are playing as {player.get("seat")}, with {player.get("partner")} as your partner.
-        </h3>
         <div className="cards">
           {displayOrder.map((seat) => 
-          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat}/>
-            )}
+          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat} player={player}/>
+            )
+            }
         </div>
       </div>
-    );
+    ));
   }
 }
