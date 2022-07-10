@@ -19,8 +19,8 @@ Empirica.breadcrumb(null);
 // At this point they have been assigned a treatment. You can return
 // different instruction steps depending on the assigned treatment.
 Empirica.introSteps(() => {
-  const steps = []
-  //const steps = [InstructionStepOne, QuizStepOne, QuizStepTwo, PreRound]; 
+  //const steps = []
+  const steps = [InstructionStepOne, QuizStepOne, QuizStepTwo, PreRound]; 
   return steps;
 });
 

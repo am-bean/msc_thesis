@@ -24,7 +24,13 @@ Empirica.onRoundStart((game, round) => {
     player.round.set("score", 0)
   })
 
+  const human = game.players.filter((player) => {return !player.bot;})[0];
+  round.set("humanPartner", human.get("partner"))
+
   round.set("winner", "East");
+  let nullObs = new Float32Array(600);
+  round.set('cumulative-obs', nullObs);
+  round.set('current-stage', 0);
 
   console.log("onRoundStart start");
   
@@ -46,6 +52,7 @@ Empirica.onStageStart((game, round, stage) => {
       round.set(`played-${player.get("seat")}`, null)
       round.set(`submitted-${player.get("seat")}`, false)
     }) 
+    round.set('current-stage', round.get('current-stage') + 1)
   }
 
 });

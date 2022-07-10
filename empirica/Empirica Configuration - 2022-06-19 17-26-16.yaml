@@ -1,55 +1,7 @@
 treatments:
-  - name: human multiplayer
-    factorIds:
-      - fXPTZpBnxsxuotxh6
-      - uimy8Qk7rRFkgdcx5
-      - no4NocAjd3Ny7cpxX
-      - Q7bKTC87PQNjfNfmn
-      - pKR6aPvBL5wyDBjbZ
-      - FccqQDekPjChDLavW
-      - d5FrNnNaTDmKALayy
-      - NjWavtCBvEaFQ2rtG
-      - SCa2erdvPzQAiaojh
-      - HpjNH3gstEahatQui
-  - name: interactive bot (global)
-    factorIds:
-      - fXPTZpBnxsxuotxh6
-      - GbiyWT2nipp7BNvak
-      - no4NocAjd3Ny7cpxX
-      - Q7bKTC87PQNjfNfmn
-      - pKR6aPvBL5wyDBjbZ
-      - 2zkyc3vkB5t4umaR7
-      - d5FrNnNaTDmKALayy
-      - qvKeXXHJnJhWWvZFv
-      - SCa2erdvPzQAiaojh
-      - p4CRFXveCXkuuLsfG
-  - name: noninteractive bot (local)
-    factorIds:
-      - fXPTZpBnxsxuotxh6
-      - bfkBvo32jL2b55Ywo
-      - no4NocAjd3Ny7cpxX
-      - Q7bKTC87PQNjfNfmn
-      - pKR6aPvBL5wyDBjbZ
-      - 2zkyc3vkB5t4umaR7
-      - d5FrNnNaTDmKALayy
-      - NjWavtCBvEaFQ2rtG
-      - hxNQFMxyS5TcALDQQ
-      - HpjNH3gstEahatQui
-  - name: solo no feedback
-    factorIds:
-      - x8NsYrN2aEXJ9ns8k
-      - uimy8Qk7rRFkgdcx5
-      - no4NocAjd3Ny7cpxX
-      - Q7bKTC87PQNjfNfmn
-      - pKR6aPvBL5wyDBjbZ
-      - FccqQDekPjChDLavW
-      - DnLWHsxWAx6j3exxj
-      - qvKeXXHJnJhWWvZFv
-      - SCa2erdvPzQAiaojh
-      - HpjNH3gstEahatQui
   - name: basic
     factorIds:
-      - 4BmD7BE3z54fmyYLG
+      - jTXNCATMbGyw2uo9J
       - no4NocAjd3Ny7cpxX
       - Q7bKTC87PQNjfNfmn
       - zfz7GdhAfKb3K5vRm
@@ -60,12 +12,6 @@ factorTypes:
     required: true
     type: Integer
     min: 1
-  - _id: Nooz2W7GnyGFZWgTB
-    name: interpretationType
-    description: Interpretation provided for AI
-    required: false
-    type: String
-    archivedAt: 2022-06-19T16:25:38.952Z
   - _id: ZRZ6Cj3NziZauB3bA
     name: roundCount
     description: Number of rounds played
@@ -80,14 +26,6 @@ factorTypes:
     type: Integer
     min: 1
     max: 12000
-  - _id: KfyLA4vySCuJ8RYAX
-    name: socialStageLength
-    description: Number of seconds in social stage
-    required: false
-    type: Integer
-    min: 1
-    max: 12000
-    archivedAt: 2022-06-19T16:25:41.366Z
   - _id: 4q2RSFfsrB3oFRTu6
     name: botsCount
     description: Number of bots
@@ -95,82 +33,14 @@ factorTypes:
     type: Integer
     min: 0
     max: 100
-  - _id: zmLFe9T5uH7cAGo4n
-    name: giveFeedback
-    description: Show score to users.
-    required: false
-    type: Boolean
-    archivedAt: 2022-06-19T16:25:42.942Z
-  - _id: Mmk6EszYubTmuPbNc
-    name: otherPlayerFeedback
-    description: Show feedback on other player's score
-    required: false
-    type: Boolean
-    archivedAt: 2022-06-19T16:25:44.009Z
-  - _id: bQ28KcJTHzCT8WmPJ
-    name: revealBots
-    description: Show that other player is a bot
-    required: false
-    type: Boolean
-    archivedAt: 2022-06-19T16:25:44.543Z
-  - _id: TTskujkQiE8PDtojt
-    name: interactiveBot
-    description: Make the bot respond interactively to player changes
-    required: false
-    type: Boolean
-    archivedAt: 2022-06-19T16:25:45.039Z
 factors:
-  - _id: d5FrNnNaTDmKALayy
-    name: 'true'
-    value: true
-    factorTypeId: zmLFe9T5uH7cAGo4n
-  - _id: DnLWHsxWAx6j3exxj
-    name: 'false'
-    value: false
-    factorTypeId: zmLFe9T5uH7cAGo4n
-  - _id: NjWavtCBvEaFQ2rtG
-    name: 'true'
-    value: true
-    factorTypeId: Mmk6EszYubTmuPbNc
-  - _id: qvKeXXHJnJhWWvZFv
-    name: 'false'
-    value: false
-    factorTypeId: Mmk6EszYubTmuPbNc
-  - _id: hxNQFMxyS5TcALDQQ
-    name: 'true'
-    value: true
-    factorTypeId: bQ28KcJTHzCT8WmPJ
-  - _id: SCa2erdvPzQAiaojh
-    name: 'false'
-    value: false
-    factorTypeId: bQ28KcJTHzCT8WmPJ
-  - _id: p4CRFXveCXkuuLsfG
-    name: 'true'
-    value: true
-    factorTypeId: TTskujkQiE8PDtojt
-  - _id: HpjNH3gstEahatQui
-    name: 'false'
-    value: false
-    factorTypeId: TTskujkQiE8PDtojt
-  - _id: uimy8Qk7rRFkgdcx5
-    name: none
-    value: None
-    factorTypeId: Nooz2W7GnyGFZWgTB
-  - _id: bfkBvo32jL2b55Ywo
-    name: local
-    value: Local
-    factorTypeId: Nooz2W7GnyGFZWgTB
-  - _id: GbiyWT2nipp7BNvak
-    name: global
-    value: Global
-    factorTypeId: Nooz2W7GnyGFZWgTB
   - _id: x8NsYrN2aEXJ9ns8k
     name: one
     value: 1
     factorTypeId: jTXNCATMbGyw2uo9J
   - _id: fXPTZpBnxsxuotxh6
-    name: two
-    value: 2
+    name: four
+    value: 4
     factorTypeId: jTXNCATMbGyw2uo9J
   - _id: stSByaLq2axRCzySD
     name: one
@@ -180,10 +50,6 @@ factors:
     name: three
     value: 3
     factorTypeId: ZRZ6Cj3NziZauB3bA
-  - _id: WxmdRvjuc2rBaw3K2
-    name: short
-    value: 60
-    factorTypeId: Jroupzjefq85xtNGj
   - _id: Q7bKTC87PQNjfNfmn
     name: normal
     value: 120
@@ -192,30 +58,10 @@ factors:
     name: long
     value: 12000
     factorTypeId: Jroupzjefq85xtNGj
-  - _id: 8GmjZDHGTdzgTSawA
-    name: short
-    value: 60
-    factorTypeId: KfyLA4vySCuJ8RYAX
-  - _id: pKR6aPvBL5wyDBjbZ
-    name: normal
-    value: 120
-    factorTypeId: KfyLA4vySCuJ8RYAX
-  - _id: CJQ74eCpLbH4m8yMK
-    name: long
-    value: 12000
-    factorTypeId: KfyLA4vySCuJ8RYAX
   - _id: 2zkyc3vkB5t4umaR7
     name: one
     value: 1
     factorTypeId: 4q2RSFfsrB3oFRTu6
-  - _id: FccqQDekPjChDLavW
-    name: zero
-    value: 0
-    factorTypeId: 4q2RSFfsrB3oFRTu6
-  - _id: 4BmD7BE3z54fmyYLG
-    name: four
-    value: 4
-    factorTypeId: jTXNCATMbGyw2uo9J
   - _id: zfz7GdhAfKb3K5vRm
     name: three
     value: 3
