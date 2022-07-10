@@ -52,7 +52,7 @@ export default class InstructionStepOne extends React.Component {
           <p>
             Play proceeds in `tricks`, a round of the table in which each player
             plays one card from their hand. To start the game, East will go first. The 
-            first player in a trick may play any card in their hard to `lead` the trick. 
+            first player in a trick may play any card in their hand to `lead` the trick. 
             After this, other players take turns proceeding clockwise e.g. (East, 
             South, West, North). When possible, new cards played must be the same suit as the 
             first card `led` in the trick. If a player cannot play a card of the same

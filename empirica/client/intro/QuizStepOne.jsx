@@ -61,7 +61,8 @@ export default class QuizStepOne extends React.Component {
           <p>
             Having read the instructions, there are now three questions to ensure
             that you understand the rules before starting the experiment. You may 
-            go back to the instructions during this quiz.
+            go back to the instructions during this quiz. You will only proceed to the 
+            next question if your answer is correct.
           </p>
           <h1> Question 1 </h1>
           {toast.show && (

@@ -69,6 +69,12 @@ Empirica.onStageEnd((game, round, stage) => {
     const leadCard = round.get(`played-${leader}`);
     const rankValues = {"9":9, "10":10, "jack":11, "queen":12, "king":13, "ace":14};
   
+    let escape = 0
+    while ((leadCard === null) && (escape < 1000)){
+      const leadCard = round.get(`played-${leader}`);
+      escape += 1;
+    }
+    
     stage.set("winningSuit", leadCard["suit"]);
     stage.set("winningRank", rankValues[leadCard["rank"]]);
     stage.set("winningSeat", leader);
