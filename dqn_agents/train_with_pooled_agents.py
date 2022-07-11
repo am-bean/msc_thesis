@@ -27,14 +27,14 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=4)
-parser.add_argument('--checkpoint_freq', type=int, default=1)
+parser.add_argument("--stop-iters", type=int, default=5000)
+parser.add_argument('--checkpoint_freq', type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--repetitions", type=int, default=6)
+parser.add_argument("--repetitions", type=int, default=32)
 parser.add_argument("--checkpoint", type=str, default='l2_4')
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
 parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
-parser.add_argument('--shutdown', type=bool, default=False)
+parser.add_argument('--shutdown', type=bool, default=True)
 parser.add_argument('--copy_to_local', type=bool, default=False)
 parser.add_argument('--use-checkpoints', type=bool, default=True)
 
