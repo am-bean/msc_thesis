@@ -26,8 +26,8 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=1)
-parser.add_argument('--checkpoint_freq', type=int, default=10000)
+parser.add_argument("--stop-iters", type=int, default=40000)
+parser.add_argument('--checkpoint_freq', type=int, default=1000)
 parser.add_argument("--num-cpus", type=int, default=4)
 parser.add_argument("--repetitions", type=int, default=6)
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
@@ -39,6 +39,7 @@ parser.add_argument('--use-checkpoints', type=bool, default=True)
 if __name__ == "__main__":
 
     checkpoints_pool = ['l1_4', 'l2_4', 'l3_4', 'l4_4']
+    raw_checkpoints_pool = checkpoints_pool.copy()
 
     args = parser.parse_args()
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
             'c': '\checkpoint_030000\checkpoint-30000'}
 
     if args.use_checkpoints:
-        for checkpoint in checkpoints_pool:
+        for checkpoint in raw_checkpoints_pool:
             for sub in subs.keys():
                 checkpoints_pool.append(checkpoint + sub)
 
@@ -107,7 +108,7 @@ if __name__ == "__main__":
         for checkpoint in checkpoints_pool:
             # Restore all policies from checkpoint.
             if checkpoint[-1] in subs.keys():
-                long_checkpoint = best_checkpoints()[checkpoint].replace('\checkpoint_040000\checkpoint-40000', subs[checkpoint[-1]])
+                long_checkpoint = best_checkpoints()[checkpoint[:-1]].replace('\checkpoint_040000\checkpoint-40000', subs[checkpoint[-1]])
             else:
                 long_checkpoint = best_checkpoints()[checkpoint]
             dummy_trainer.restore(args.cp_filepath + long_checkpoint)
@@ -129,7 +130,7 @@ if __name__ == "__main__":
             "DQN",
             stop={"training_iteration": args.stop_iters},
             config=new_config,
-            checkpoint_freq=1000,
+            checkpoint_freq=args.checkpoint_freq,
             reuse_actors=True,
             # max_concurrent_trials=1000,
             verbose=1
@@ -139,16 +140,11 @@ if __name__ == "__main__":
 
         ray.shutdown()
 
-        old_cp = args.checkpoint
-        new_cp = old_cp[:-1] + str(int(old_cp[-1]) + 1 + i)
         filepath = args.cp_filepath.replace('/', '\\')
         file = cp.local_path.replace(filepath, "")
         checkpoint_name = args.checkpoint_name
         folder = cp.local_path.replace(checkpoint_name.replace('/', '\\'), "")
         folder_only = folder.replace(filepath, "")
-        update_best_checkpoints(file, new_cp)
-
-        best_checkpoint = cp
 
         machine = platform.uname()[1]
         if machine != 'AndrewXPS15':
