@@ -41,7 +41,7 @@ Empirica.round(Round);
 Empirica.exitSteps((game, player) => {
   return player.exitStatus !== "finished"
     ? [Sorry, Thanks]
-    : [Thanks]; //ExitSurvey
+    : [ExitSurvey, Thanks]; //ExitSurvey
 });
 
 // Start the app render tree.

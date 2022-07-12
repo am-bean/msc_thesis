@@ -21,6 +21,7 @@ Empirica.gameInit((game) => {
 
   const filepath = '../web.browser/app/pretrained_models/'
   const modelPaths = ['fcplay.onnx', 'poolplay.onnx', 'selfplay.onnx', 'rulebasedplay.onnx']
+  const opponentPath = ['random.onnx']
 
   game.players.forEach((player, i) => {
     player.set("avatar", `/avatars/jdenticon/${player._id}`);
@@ -42,7 +43,7 @@ Empirica.gameInit((game) => {
       data: {
         case: "base_game",
         partnerModel: path.resolve(filepath + modelPaths[Math.floor((modelStartIndex + i) / 2) % modelPaths.length]),
-        opponentModel: path.resolve(filepath + modelPaths[Math.floor((modelStartIndex + i) / 2) % modelPaths.length]),
+        opponentModel: path.resolve(filepath + opponentPath[0]),
         effectiveIndex: i,
       },
     });

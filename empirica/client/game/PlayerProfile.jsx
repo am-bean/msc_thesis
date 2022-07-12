@@ -10,9 +10,9 @@ export default class PlayerProfile extends React.Component {
       <>
         <div className="value-label">
           <span>CASE</span>{" "}
-          {round.get("effectiveIndex") +
+          {(round.get("effectiveIndex") + 1)+
               " / " +
-              game.treatment.roundCount.toString()}
+              (game.treatment.roundCount * 2).toString()}
         </div>
 
         <div className="value-label">
