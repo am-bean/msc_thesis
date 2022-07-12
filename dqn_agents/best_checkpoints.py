@@ -22,5 +22,5 @@ def update_best_checkpoints(file=None, key=None):
 
 
 if __name__ == "__main__":
-    update_best_checkpoints('DQN_cards_d32cf_00000_0_2022-07-07_10-30-30\checkpoint_070000\checkpoint-70000','l3_7')
+    update_best_checkpoints('DQN_cards_b2121_00000_0_2022-07-08_20-29-41\checkpoint_040000\checkpoint-40000','rb4_4')
 
