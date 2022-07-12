@@ -13,7 +13,7 @@ export default class InstructionStepOne extends React.Component {
           <p>
             In this experiment, you will play an online card game based on the
             game Spades. The game involves two teams of two competing to take as 
-            many tricks as possible. You will play the game four times with
+            many tricks as possible. You will play the game several times with
             different AI partners. The rules of the game are explained below:
           </p>
           <h3>

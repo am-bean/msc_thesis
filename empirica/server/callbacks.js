@@ -95,7 +95,6 @@ Empirica.onStageEnd((game, round, stage) => {
     
     game.players.forEach((p) => {
       if ((round.get("winner") === p.get("seat")) || (round.get("winner") === p.get("partner"))){
-        console.log(`Incrementing score for`, p.get("seat"))
         p.round.set("score", p.round.get("score") + 1)
       }
     })

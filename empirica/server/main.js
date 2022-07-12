@@ -20,7 +20,7 @@ Empirica.gameInit((game) => {
   const numCards = 6
 
   const filepath = '../web.browser/app/pretrained_models/'
-  const modelPaths = ['test_model.onnx']
+  const modelPaths = ['fcplay.onnx', 'poolplay.onnx', 'selfplay.onnx', 'rulebasedplay.onnx']
 
   game.players.forEach((player, i) => {
     player.set("avatar", `/avatars/jdenticon/${player._id}`);
@@ -36,13 +36,13 @@ Empirica.gameInit((game) => {
   const modelStartIndex = game.treatment.partnerIndex || 0;
   console.log(`Using treatment ${modelStartIndex}`)
 
-  for (let i = 0; i < roundCount; i++) {
+  for (let i = 0; i < roundCount * 2; i++) {
 
     const round = game.addRound({
       data: {
         case: "base_game",
-        partnerModel: path.resolve(filepath + modelPaths[(modelStartIndex + i) % modelPaths.length]),
-        opponentModel: path.resolve(filepath + modelPaths[(modelStartIndex + i) % modelPaths.length]),
+        partnerModel: path.resolve(filepath + modelPaths[Math.floor((modelStartIndex + i) / 2) % modelPaths.length]),
+        opponentModel: path.resolve(filepath + modelPaths[Math.floor((modelStartIndex + i) / 2) % modelPaths.length]),
         effectiveIndex: i,
       },
     });
@@ -73,5 +73,15 @@ Empirica.gameInit((game) => {
         type: "round_outcome",
       },
     });
+    if ((i % 2 !== 0)) {
+      round.addStage({
+        name: `questions_${i}`,
+        displayName: `Game ${i} Questions`,
+        durationInSeconds: stageDuration,
+        data: {
+          type: "round_questions",
+        },
+      });
+    }
   }
 });

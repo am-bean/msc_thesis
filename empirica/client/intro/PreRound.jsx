@@ -11,9 +11,10 @@ export default class PreRound extends React.Component {
         <div className="instructions">
           <h1 className={"bp3-heading"}>Instructions</h1>
           <p className="p-pre-round">
-            Now you are moving on to the games. There are four games,
-            each time you will face the same opponents, but have different
-            partners. At the end you will be asked which partners you preferred.
+            Now you are moving on to the games. There are four different AI partners
+            for you to play with. For each, you will play two games, and then 
+            answer two questions about how well you think the agent played, and 
+            whether you would choose it as a partner again.
             Good luck!
           </p>
 

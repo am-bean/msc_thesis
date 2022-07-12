@@ -126,6 +126,11 @@ onStageTick(bot, game, round, stage, secondsRemaining) {
     bot.stage.submit();
     round.set(`submitted-${bot.get("seat")}`, true);
   }
+  if (stage.get("type") === "round_questions") {
+    console.log("Bot submitted instantly")
+    bot.stage.submit();
+    round.set(`submitted-${bot.get("seat")}`, true);
+  }
 },
 
   // // NOT SUPPORTED A player has changed a value
