@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--num-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--first-checkpoint", type=str, default='l1_4')
+parser.add_argument("--first-checkpoint", type=str, default='fcp')
 parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/aws/')
 
 if __name__ == "__main__":
