@@ -3,6 +3,7 @@ import Empirica from "meteor/empirica:core";
 import InstructionStepOne from "./intro/InstructionStepOne";
 import QuizStepOne from "./intro/QuizStepOne";
 import QuizStepTwo from "./intro/QuizStepTwo";
+import QuizStepThree from "./intro/QuizStepThree";
 import PreRound from "./intro/PreRound";
 import ExitSurvey from "./exit/ExitSurvey";
 import Sorry from "./exit/Sorry";
@@ -19,8 +20,8 @@ Empirica.breadcrumb(null);
 // At this point they have been assigned a treatment. You can return
 // different instruction steps depending on the assigned treatment.
 Empirica.introSteps(() => {
-  const steps = []
-  //const steps = [InstructionStepOne, QuizStepOne, QuizStepTwo, PreRound]; 
+  //const steps = []
+  const steps = [InstructionStepOne, QuizStepOne, QuizStepTwo, QuizStepThree, PreRound]; 
   return steps;
 });
 
@@ -40,7 +41,7 @@ Empirica.round(Round);
 Empirica.exitSteps((game, player) => {
   return player.exitStatus !== "finished"
     ? [Sorry, Thanks]
-    : [Thanks]; // ExitSurvey
+    : [Thanks]; //ExitSurvey
 });
 
 // Start the app render tree.

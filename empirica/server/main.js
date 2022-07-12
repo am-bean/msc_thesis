@@ -2,6 +2,7 @@ import Empirica from "meteor/empirica:core";
 
 import "./callbacks.js";
 import "./bots.js";
+const path = require('path');
 
 // gameInit is where the structure of a game is defined.
 // Just before every game starts, once all the players needed are ready, this
@@ -18,6 +19,9 @@ Empirica.gameInit((game) => {
   const follows = {"North":"West", "South":"East", "East":"North", "West":"South"}
   const numCards = 6
 
+  const filepath = '../web.browser/app/pretrained_models/'
+  const modelPaths = ['test_model.onnx']
+
   game.players.forEach((player, i) => {
     player.set("avatar", `/avatars/jdenticon/${player._id}`);
     player.set("score", 0);
@@ -26,16 +30,19 @@ Empirica.gameInit((game) => {
     player.set("follows", follows[seats[i]])
   });
 
-  const roundCount = game.treatment.roundCount || 10;
+  const roundCount = game.treatment.roundCount || 4;
   const playerCount = game.treatment.playerCount || 4;
   const stageDuration = game.treatment.stageLength || 120;
-
+  const modelStartIndex = game.treatment.partnerIndex || 0;
+  console.log(`Using treatment ${modelStartIndex}`)
 
   for (let i = 0; i < roundCount; i++) {
 
     const round = game.addRound({
       data: {
         case: "base_game",
+        partnerModel: path.resolve(filepath + modelPaths[(modelStartIndex + i) % modelPaths.length]),
+        opponentModel: path.resolve(filepath + modelPaths[(modelStartIndex + i) % modelPaths.length]),
         effectiveIndex: i,
       },
     });
@@ -58,5 +65,13 @@ Empirica.gameInit((game) => {
       });
       continue;
     }
+    round.addStage({
+      name: `summary_${i}`,
+      displayName: `Game ${i} Outcome`,
+      durationInSeconds: stageDuration,
+      data: {
+        type: "round_outcome",
+      },
+    });
   }
 });

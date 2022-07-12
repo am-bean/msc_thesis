@@ -13,8 +13,6 @@ import React from "react";
 export default class ExitSurvey extends React.Component {
   static stepName = "ExitSurvey";
   state = {
-    age: "",
-    gender: "",
     strategy: "",
     fair: "",
     feedback: "",
@@ -61,8 +59,6 @@ export default class ExitSurvey extends React.Component {
 
   exitForm = (game) => {
     const {
-      age,
-      gender,
       strategy,
       fair,
       feedback,
@@ -78,54 +74,15 @@ export default class ExitSurvey extends React.Component {
       <div>
         {" "}
         <p>
-          Please answer the following short survey. Fields with asterisk (*) are
-          required.
+          Please answer the following short survey.
         </p>
         <form onSubmit={this.handleSubmit}>
-          <div className="form-line">
-            <FormGroup
-              inline={true}
-              label={"Age"}
-              labelFor={"age"}
-              className={"form-group exit-radio-area"}
-            >
-              <input
-                id="age"
-                className={Classes.INPUT}
-                type="number"
-                min="0"
-                max="150"
-                step="1"
-                dir="auto"
-                name="age"
-                value={age}
-                onChange={this.handleChange}
-              />
-            </FormGroup>
-
-            <FormGroup
-              inline={true}
-              label={"Gender"}
-              labelFor={"gender"}
-              className={"form-group exit-radio-area"}
-            >
-              <input
-                id="gender"
-                className={Classes.INPUT}
-                type="text"
-                dir="auto"
-                name="gender"
-                value={gender}
-                onChange={this.handleChange}
-              />
-            </FormGroup>
-          </div>
-
+          
           <div className="form-line">
             <RadioGroup
               inline={true}
               name="education"
-              label="Highest Education Qualification?"
+              label="Which ?"
               onChange={this.handleChange}
               selectedValue={education}
             >

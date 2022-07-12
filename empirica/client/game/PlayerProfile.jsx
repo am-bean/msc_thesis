@@ -5,6 +5,7 @@ import Timer from "./Timer.jsx";
 export default class PlayerProfile extends React.Component {
   render() {
     const { game, stage, player, round } = this.props;
+    const opponent = game.players.filter((p) => {return p.get("seat") === player.get("follows");})[0]
     return (
       <>
         <div className="value-label">
@@ -15,7 +16,7 @@ export default class PlayerProfile extends React.Component {
         </div>
 
         <div className="value-label">
-          <span>SCORE</span> {(player.round.get("score"))}
+          <span>SCORE: </span> {(player.round.get("score"))} - {opponent.round.get("score")}
         </div>
         
         <Timer stage={stage} player={player} />

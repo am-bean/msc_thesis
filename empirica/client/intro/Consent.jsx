@@ -7,10 +7,12 @@ export default class Consent extends React.Component {
     return (
       <Centered>
         <div className="consent">
-          <h1 className="bp3-heading"> Informed Consent Form </h1>
           <h2 className="bp3-heading"> Teaching AI to Cooperate with Human 
           Partners through Rule-based Play </h2>
-          <h3 className="bp3-heading"> General Information </h3>
+          <br/>
+          <h2 className="bp3-heading"> Informed Consent Form </h2>
+          <br/>
+          <h3 className="bp3-heading"> What is this study about? </h3>
           <p className="bp3-ui-text">
           The aim of this research project is to improve the ability of AI agents
           to be good collaborators with humans. In this study, we are focused on
@@ -19,9 +21,11 @@ export default class Consent extends React.Component {
           play a card game. We now seek to compare how well the AIs can cooperate with 
           human partners.
           </p>
+          <br/>
+          <h3 className="bp3-heading"> General Information </h3>
           <p className="bp3-ui-text">
           We appreciate your interest in participating in this online task. You 
-          have been invited to participate as you are over the age of 18. 
+          are invited to participate if you are over the age of 18. 
           Please read through this information before agreeing to participate 
           (if you wish to) by clicking the ‘I AGREE’ box below.
           </p>
@@ -34,13 +38,13 @@ export default class Consent extends React.Component {
           of a card game, complete a few practices to ensure understanding, and 
           then play several rounds with an AI partner. Afterwards, we will ask 
           you about your experience. This should take about 30 minutes. No 
-          background knowledge is required. We will collect your scores on the 
-          practice examples and the state of the game (who has which cards, and 
-          which actions are taken) for each round of cards. The data will be used 
-          to assess which AI agents are best able to coordinate with human play. 
+          background knowledge is required. We will collect the state of the game 
+          (who has which cards, and which actions are taken) for each round of 
+          cards. The data will be used to assess which AI agents are best able to 
+          coordinate with human play.
           
         </p>
-
+        <br/>
           <h3 className="bp3-heading"> Do I have to take part? </h3>
           <p className="bp3-ui-text">
           No. Please note that participation is voluntary. If you do decide to 
@@ -49,9 +53,9 @@ export default class Consent extends React.Component {
           browser.
           </p>
           <p className="bp3-ui-text">
-          All questions are optional.
+          All questions and games are optional, but must be completed in order.
           </p>
-
+          <br/>
           <h3 className="bp3-heading"> How will my data be used? </h3>
           <p className="bp3-ui-text">
           We will not collect any data that could directly identify you.
@@ -71,7 +75,7 @@ export default class Consent extends React.Component {
           Area. By submitting your personal data, you agree to this transfer, 
           storing or processing.
           </p>
-
+          <br/>
           <h3 className="bp3-heading"> Who will have access to my data? </h3>
           <p className="bp3-ui-text">
           The University of Oxford is the data controller with respect to your
@@ -95,7 +99,7 @@ export default class Consent extends React.Component {
           <p className="bp3-ui-text">
           The results will be written up for an MSc degree.
           </p>
-
+          <br/>
           <h3 className="bp3-heading"> Who has reviewed this study? </h3>
           <p className="bp3-ui-text">
           This project has been reviewed by, and received ethics clearance 
@@ -103,7 +107,7 @@ export default class Consent extends React.Component {
           University Research Ethics Committee SSH_OII_CIA_22_054.
 
           </p>
-
+          <br/>
           <h3 className="bp3-heading"> Who do I contact if I have a concern or I wish to complain? </h3>
           <p className="bp3-ui-text">
           If you have a concern about any aspect of this study, please speak 
@@ -120,10 +124,22 @@ export default class Consent extends React.Component {
           Email: ethics@socsci.ox.ac.uk; Address: Research Services, University of 
           Oxford, Boundary Brook House, Churchill Drive, Headington, Oxford OX3 7GB
           </p>
+          <br/>
+          <h3 className="bp3-heading"> Important Note </h3>
+          <p className="bp3-ui-text">
+          There are two features of this website which are defaults from the website 
+          builder we used and could not easily be removed or changed. Firstly, the next page will ask you for
+          an identifier. Please make up something anonymous. This answer will be stored, so DO 
+          NOT use anything which could identify you individually.
+          </p>
+          <p className="bp3-ui-text">
+          The second broken feature is the about button in the top corner. I cannot figure out how 
+          to set the text, so it is a poorly worded template. I apologize for this inconvenience.
+          </p>
 
           <h3 className="bp3-heading">
             {" "}
-            Please note that you may only participate in this survey if you are 18 years 
+            Please note that you may only participate in this study if you are 18 years 
             of age or over. If you certify that you are 18 years of age or over, and if 
             you have read the information above and agree to participate 
             with the understanding that the data you submit will be processed accordingly, 

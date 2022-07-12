@@ -11,9 +11,10 @@ export default class PreRound extends React.Component {
         <div className="instructions">
           <h1 className={"bp3-heading"}>Instructions</h1>
           <p className="p-pre-round">
-            Now you are moving on to the games. The first two
-            cases are practice cases so you can see what the game is like. These
-            will be followed by the four actual games to try to win!
+            Now you are moving on to the games. There are four games,
+            each time you will face the same opponents, but have different
+            partners. At the end you will be asked which partners you preferred.
+            Good luck!
           </p>
 
           <p>

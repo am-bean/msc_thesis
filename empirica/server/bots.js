@@ -1,4 +1,6 @@
 import Empirica from "meteor/empirica:core";
+import {Position, Toaster} from "@blueprintjs/core";
+
 
 // This is where you add bots, like Bob:
 const ort = require('onnxruntime-node');
@@ -10,14 +12,24 @@ Empirica.bot("bob", {
     console.log("Called bob on stage start")
   },
 
-  async loadNN(actionMask, obs) {
+  encodeCard(card) {
+    const suitValues = {spades: 0, clubs: 1, diamonds: 2, hearts: 3};
+    const rankValues = {9: 0, 10: 1, jack: 2, queen: 3, king: 4, ace: 5};
+    return suitValues[card['suit']]*6 + rankValues[card['rank']];
+  },
+
+  decodeCard(code) {
+    const suitValues = {0: 'spades', 1: 'clubs', 2: 'diamonds', 3: 'hearts'}
+    const rankValues = {0: "9", 1: "10", 2: "jack", 3: "queen", 4: "king", 5: "ace"}
+    return {rank: rankValues[code % 6], suit: suitValues[parseInt(code/6)]};
+  },
+
+  async loadNN(actionMask, obs, modelPath) {
     try {
         // create a new session and run the specific model.
         //
-        const filepath = '../web.browser/app/pretrained_models/test_model.onnx'
-        const fullpath = path.resolve(filepath)
-        const session = await ort.InferenceSession.create(fullpath);
-
+        console.log('Loaded NN')
+        const session = await ort.InferenceSession.create(modelPath);
         // prepare inputs. a tensor need its corresponding TypedArray as data
         const infMask = actionMask.map(x => Math.log(x))
         let dataA = new Float32Array(624);
@@ -36,11 +48,9 @@ Empirica.bot("bob", {
         // read from results
         const dataC = results.output.data;
         const maskData = dataC.map((x, i) => x + infMask[i])
-
+        console.log(maskData)
         const action = [].reduce.call(maskData, (m, c, i, arr) => c > arr[m] ? i : m, 0)
-        const suitValues = {0: 'spades', 1: 'clubs', 2: 'diamonds', 3: 'hearts'}
-        const rankValues = {0: "9", 1: "10", 2: "jack", 3: "queen", 4: "king", 5: "ace"}
-        const actionCard = {rank: rankValues[action % 6], suit: suitValues[parseInt(action/6)]}
+        const actionCard = this.decodeCard(action)
         return actionCard
 
 
@@ -51,38 +61,44 @@ Empirica.bot("bob", {
 
   // Called during each stage at tick interval (~1s at the moment)
 onStageTick(bot, game, round, stage, secondsRemaining) {
-  const suitValues = {spades: 0, clubs: 1, diamonds: 2, hearts: 3}
-  const rankValues = {9: 0, 10: 1, jack: 2, queen: 3, king: 4, ace: 5}
   
   if (bot.stage.submitted) {
     return;
   }
+  console.log('Called bot')
   if (stage.get("type") === "play") {
-    if ((bot.get("seat") === round.get("winner")) || (round.get(`submitted-${bot.get("follows")}`))){
+    if ((bot.get("seat") === round.get("winner")) || (round.get(`submitted-${bot.get("follows")}`) && stage.get(`played-${round.get("winner")}`) !== null)){
       
 
       let hand = bot.round.get("hand")
       const hasLead = (bot.get("seat") === round.get("winner"))
       const isFollowing = (round.get(`submitted-${bot.get("follows")}`))
       let hasSuit = false
-      if (hasLead) {console.log(`Bob ${bot.get("seat")} leading`)}
-      if (isFollowing) {console.log(`Bob ${bot.get("seat")} following`)}
+      if (hasLead) {console.log(`Bot ${bot.get("seat")} leading`)}
+      if (isFollowing) {console.log(`Bot ${bot.get("seat")} following`)}
       if (!hasLead) {hasSuit = hand.some((item) => {return item['suit'] === stage.get(`played-${round.get("winner")}`)['suit'];})}
 
       let actionMask = new Float32Array(24);
       if (hasSuit) {
         hand.forEach(card => {
-          actionMask[suitValues[card['suit']]*6 + rankValues[card['rank']]] = (card['suit'] === stage.get(`played-${round.get("winner")}`)['suit'] ? 1 : 0);
+          actionMask[this.encodeCard(card)] = (card['suit'] === stage.get(`played-${round.get("winner")}`)['suit'] ? 1 : 0);
         }); 
       } else {
         hand.forEach(card => {
-          actionMask[suitValues[card['suit']]*6 + rankValues[card['rank']]] = 1;
+          actionMask[this.encodeCard(card)] = 1;
         }); 
       }
 
+      const cumObs = round.get('cumulative-obs')
       let obs = new Float32Array(600);
+      Object.keys(cumObs).forEach((key) => {
+        obs[key] = cumObs[key];
+      });
+      console.log(obs)
 
-      this.loadNN(actionMask, obs).then(action => 
+      const humanPartner = round.get("partner") 
+      const modelPath = (humanPartner == bot.get("seat")) ? round.get("partnerModel") : round.get("opponentModel")
+      this.loadNN(actionMask, obs, modelPath).then(action => 
         {console.log(action)
         stage.set(`played-${bot.get("seat")}`, action);
         round.set(`played-${bot.get("seat")}`, action);
@@ -91,9 +107,20 @@ onStageTick(bot, game, round, stage, secondsRemaining) {
         round.set(`submitted-${bot.get("seat")}`, true);
         bot.stage.submit();
       })
+
+      const agent_mapping = {East: 0, South: 1, West: 2, North: 3}
+      let seat = bot.get("seat");
+      let stageIndex = round.get('current-stage');
+      let card = stage.get(`played-${seat}`);
+      if (card) {
+        let obsIndex = agent_mapping[seat]*6*24 + this.encodeCard(card) + (stageIndex - 1)*24;
+        if (!isNaN(obsIndex)) {obs[obsIndex] = 1;}
+      }
+      round.set('cumulative-obs', obs);
+
     }
   }
-  if (stage.get("type") === "outcome") {
+  if ((stage.get("type") === "outcome") || (stage.get("type") === "round_outcome")) {
     const cardDetails = round.get(`played-${bot.get("seat")}`);
     stage.set(`played-${bot.get("seat")}`, cardDetails);
     bot.stage.submit();

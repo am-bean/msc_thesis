@@ -24,7 +24,13 @@ Empirica.onRoundStart((game, round) => {
     player.round.set("score", 0)
   })
 
+  const human = game.players.filter((player) => {return !player.bot;})[0];
+  round.set("humanPartner", human.get("partner"))
+
   round.set("winner", "East");
+  let nullObs = new Float32Array(600);
+  round.set('cumulative-obs', nullObs);
+  round.set('current-stage', 0);
 
   console.log("onRoundStart start");
   
@@ -40,12 +46,15 @@ Empirica.onStageStart((game, round, stage) => {
       let card = round.get(`played-${player.get("seat")}`)
       stage.set(`played-${player.get("seat")}`, card)
     }) 
-  } else {
+  } else if (stage.get("type") === "play") {
     game.players.forEach((player) => {
       stage.set(`played-${player.get("seat")}`, null)
       round.set(`played-${player.get("seat")}`, null)
       round.set(`submitted-${player.get("seat")}`, false)
     }) 
+    round.set('current-stage', round.get('current-stage') + 1)
+  } else {
+    
   }
 
 });
@@ -60,6 +69,12 @@ Empirica.onStageEnd((game, round, stage) => {
     const leadCard = round.get(`played-${leader}`);
     const rankValues = {"9":9, "10":10, "jack":11, "queen":12, "king":13, "ace":14};
   
+    let escape = 0
+    while ((leadCard === null) && (escape < 1000)){
+      const leadCard = round.get(`played-${leader}`);
+      escape += 1;
+    }
+    
     stage.set("winningSuit", leadCard["suit"]);
     stage.set("winningRank", rankValues[leadCard["rank"]]);
     stage.set("winningSeat", leader);
@@ -78,9 +93,10 @@ Empirica.onStageEnd((game, round, stage) => {
 
     round.set("winner", stage.get("winningSeat"))
     
-    game.players.forEach((player) => {
-      if ((round.get("winner") === player.get("seat")) || (round.get("winner") === player.get("partner"))){
-        player.round.set("score", player.round.get("score") + 1)
+    game.players.forEach((p) => {
+      if ((round.get("winner") === p.get("seat")) || (round.get("winner") === p.get("partner"))){
+        console.log(`Incrementing score for`, p.get("seat"))
+        p.round.set("score", p.round.get("score") + 1)
       }
     })
   }

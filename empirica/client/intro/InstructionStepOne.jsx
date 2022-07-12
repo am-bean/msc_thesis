@@ -11,11 +11,10 @@ export default class InstructionStepOne extends React.Component {
         <div className="instructions">
           <h1 className={"bp3-heading"}>Instructions</h1>
           <p>
-            In this experiment, you will play an online card game. The
-            game involves two partnerships competing to take as 
-            many tricks as possible. You will be asked to play four 
-            repetitions of this game with different AI partners. The 
-            rules of the game are explained below:
+            In this experiment, you will play an online card game based on the
+            game Spades. The game involves two teams of two competing to take as 
+            many tricks as possible. You will play the game four times with
+            different AI partners. The rules of the game are explained below:
           </p>
           <h3>
             <u>What are playing cards:</u>
@@ -45,20 +44,20 @@ export default class InstructionStepOne extends React.Component {
             <u>How to play:</u>
           </h3>
           <p>
-            Each of four players is randomly dealt (given) one quarter of the deck to be
+            Each of four players is randomly dealt (given) six cards, one quarter of the deck, to be
             their hand. These cards are theirs to use, and are secret from the other
-            players. Partners are seated opposite each other, with seats often labelled 
+            players. Partners are `seated` opposite each other, with seats often labelled 
             using compass directions, so that North/South and East/West are the partnerships.
           </p>
           <p>
             Play proceeds in `tricks`, a round of the table in which each player
             plays one card from their hand. To start the game, East will go first. The 
-            first player in a trick may play any card in their hard to `lead` the trick. 
-            After this, other players take turns proceeding clockwise e.g. (North, East, 
-            South, West). When possible, new cards played must be the same suit as the 
-            first card `led` in the trick. If a player cannot playing a card of the same
+            first player in a trick may play any card in their hand to `lead` the trick. 
+            After this, other players take turns proceeding clockwise e.g. (East, 
+            South, West, North). When possible, new cards played must be the same suit as the 
+            first card `led` in the trick. If a player cannot play a card of the same
             suit, they may play any card in their hand. Once each player has played a card,
-            one player wins the trick, scoring a point, and the played cards are removed. 
+            one player wins the trick, scoring a point, and the played cards are discarded. 
             The winner gets to lead the next trick using the remaining cards in their hand.
           </p>
           <p>
