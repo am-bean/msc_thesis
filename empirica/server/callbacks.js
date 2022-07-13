@@ -64,40 +64,40 @@ Empirica.onStageStart((game, round, stage) => {
 Empirica.onStageEnd((game, round, stage) => {
 
   if (stage.get("type") === "play"){
-    round.set("lead", round.get("winner"))
-    const leader = round.get("lead");
-    const leadCard = round.get(`played-${leader}`);
-    const rankValues = {"9":9, "10":10, "jack":11, "queen":12, "king":13, "ace":14};
-  
-    let escape = 0
-    while ((leadCard === null) && (escape < 1000)){
-      const leadCard = round.get(`played-${leader}`);
-      escape += 1;
-    }
-    
-    stage.set("winningSuit", leadCard["suit"]);
-    stage.set("winningRank", rankValues[leadCard["rank"]]);
-    stage.set("winningSeat", leader);
-    
-    game.players.forEach((player) => {
-      let card = round.get(`played-${player.get("seat")}`)
-      if ((card['suit'] === stage.get("winningSuit")) && (rankValues[card["rank"]] > stage.get("winningRank"))) {
-        stage.set("winningRank", rankValues[card["rank"]]);
-        stage.set("winningSeat", player.get("seat"));
-      } else if ((card['suit'] === "spades") && (stage.get("winningSuit") !== "spades")) {
-        stage.set("winningSuit", "spades");
-        stage.set("winningRank", rankValues[card["rank"]]);
-        stage.set("winningSeat", player.get("seat"));  
-      }
-    });
+    if (game.players.every((player) => {round.get(`played-${player.get("seat")}`) !== undefined})){
 
-    round.set("winner", stage.get("winningSeat"))
+      round.set("lead", round.get("winner"))
+      const leader = round.get("lead");
+      const leadCard = round.get(`played-${leader}`);
+      const rankValues = {"9":9, "10":10, "jack":11, "queen":12, "king":13, "ace":14};
     
-    game.players.forEach((p) => {
-      if ((round.get("winner") === p.get("seat")) || (round.get("winner") === p.get("partner"))){
-        p.round.set("score", p.round.get("score") + 1)
-      }
-    })
+      // Waiting here briefly because the servers can be slow to update values
+      stage.set("winningSuit", leadCard["suit"]);
+      stage.set("winningRank", rankValues[leadCard["rank"]]);
+      stage.set("winningSeat", leader);
+      
+      game.players.forEach((player) => {
+        let card = round.get(`played-${player.get("seat")}`)
+        if ((card['suit'] === stage.get("winningSuit")) && (rankValues[card["rank"]] > stage.get("winningRank"))) {
+          stage.set("winningRank", rankValues[card["rank"]]);
+          stage.set("winningSeat", player.get("seat"));
+        } else if ((card['suit'] === "spades") && (stage.get("winningSuit") !== "spades")) {
+          stage.set("winningSuit", "spades");
+          stage.set("winningRank", rankValues[card["rank"]]);
+          stage.set("winningSeat", player.get("seat"));  
+        }
+      });
+
+      round.set("winner", stage.get("winningSeat"))
+      
+      game.players.forEach((p) => {
+        if ((round.get("winner") === p.get("seat")) || (round.get("winner") === p.get("partner"))){
+          p.round.set("score", p.round.get("score") + 1)
+        }
+      })
+    } else {
+      game.players.forEach((player) => {player.exit("timedOut")})
+    }
   }
 });
 

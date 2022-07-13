@@ -10,11 +10,18 @@ import Sorry from "./exit/Sorry";
 import Thanks from "./exit/Thanks";
 import Round from "./game/Round";
 import Consent from "./intro/Consent";
+import About from "./game/About";
+import NewPlayer from "./intro/NewPlayer";
 
 // Set the Consent Component you want to present players (optional).
 Empirica.consent(Consent);
 
+Empirica.newPlayer(NewPlayer);
+
 Empirica.breadcrumb(null);
+
+Empirica.about(About);
+
 
 // Introduction pages to show before they play the game (optional).
 // At this point they have been assigned a treatment. You can return

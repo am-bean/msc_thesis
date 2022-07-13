@@ -111,9 +111,9 @@ export default class Consent extends React.Component {
           <h3 className="bp3-heading"> Who do I contact if I have a concern or I wish to complain? </h3>
           <p className="bp3-ui-text">
           If you have a concern about any aspect of this study, please speak 
-          to Andrew Bean (andrew.bean@oii.ox.ac.uk) or his supervisor, 
-          Dr Luc Rocher (luc.rocher@oii.ox.ac.uk) and we will do our best to 
-          answer your query. I/ We will acknowledge your concern within 10 
+          to Andrew Bean (andrew.bean@oii.ox.ac.uk) or his supervisors, 
+          Dr Luc Rocher (luc.rocher@oii.ox.ac.uk) or Dr Adam Mahdi (adam.mahdi@oii.ox.ac.uk)
+          and we will do our best to answer your query. I/ We will acknowledge your concern within 10 
           working days and give you an indication of how it will be dealt with. 
           If you remain unhappy or wish to make a formal complaint, please contact 
           the Chair of the Research Ethics Committee at the University of Oxford 
@@ -127,14 +127,9 @@ export default class Consent extends React.Component {
           <br/>
           <h3 className="bp3-heading"> Important Note </h3>
           <p className="bp3-ui-text">
-          There are two features of this website which are defaults from the website 
-          builder we used and could not easily be removed or changed. Firstly, the next page will ask you for
+          The next page will ask you for
           an identifier. Please make up something anonymous. This answer will be stored, so DO 
           NOT use anything which could identify you individually.
-          </p>
-          <p className="bp3-ui-text">
-          The second broken feature is the about button in the top corner. I cannot figure out how 
-          to set the text, so it is a poorly worded template. I apologize for this inconvenience.
           </p>
 
           <h3 className="bp3-heading">
