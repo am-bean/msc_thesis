@@ -64,7 +64,13 @@ Empirica.onStageStart((game, round, stage) => {
 Empirica.onStageEnd((game, round, stage) => {
 
   if (stage.get("type") === "play"){
-    if (game.players.every((player) => {round.get(`played-${player.get("seat")}`) !== undefined})){
+
+    // Wait a brief moment for server lag
+    let i = 0;
+    while ((i < 1000) && (game.players.some((player) => {return round.get(`played-${player.get("seat")}`) !== undefined}))) {
+      i++;
+    }
+    if (game.players.every((player) => {return round.get(`played-${player.get("seat")}`) !== undefined})){
 
       round.set("lead", round.get("winner"))
       const leader = round.get("lead");
@@ -96,6 +102,7 @@ Empirica.onStageEnd((game, round, stage) => {
         }
       })
     } else {
+      console.log("Timed out:")
       game.players.forEach((player) => {player.exit("timedOut")})
     }
   }

@@ -16,7 +16,8 @@ import NewPlayer from "./intro/NewPlayer";
 // Set the Consent Component you want to present players (optional).
 Empirica.consent(Consent);
 
-Empirica.newPlayer(NewPlayer);
+//Could set new player screen more nicely in future version of empirica by doing this
+//Empirica.newPlayer(NewPlayer);
 
 Empirica.breadcrumb(null);
 

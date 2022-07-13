@@ -34,15 +34,15 @@ Empirica.gameInit((game) => {
   const roundCount = game.treatment.roundCount || 4;
   const playerCount = game.treatment.playerCount || 4;
   const stageDuration = game.treatment.stageLength || 120;
-  const modelStartIndex = game.treatment.partnerIndex || 0;
-  console.log(`Using treatment ${modelStartIndex}`)
+  const shuffledPaths = _.shuffle(modelPaths)
+  game.set('modelOrder',shuffledPaths)
 
   for (let i = 0; i < roundCount * 2; i++) {
 
     const round = game.addRound({
       data: {
         case: "base_game",
-        partnerModel: path.resolve(filepath + modelPaths[Math.floor((modelStartIndex + i) / 2) % modelPaths.length]),
+        partnerModel: path.resolve(filepath + shuffledPaths[Math.floor(i / 2) % modelPaths.length]),
         opponentModel: path.resolve(filepath + opponentPath[0]),
         effectiveIndex: i,
       },
