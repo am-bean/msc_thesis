@@ -13,15 +13,8 @@ import React from "react";
 export default class ExitSurvey extends React.Component {
   static stepName = "ExitSurvey";
   state = {
-    strategy: "",
-    fair: "",
-    feedback: "",
     experience: "",
-    botUnderstand: "",
-    botTrust: "",
-    botAdopt: "",
-    botUseful: "",
-    comments: "",
+    feedback: "",
   };
 
   handleChange = (event) => {
@@ -46,15 +39,8 @@ export default class ExitSurvey extends React.Component {
 
   exitForm = (game) => {
     const {
-      strategy,
-      fair,
       feedback,
       experience,
-      botUnderstand,
-      botTrust,
-      botAdopt,
-      botUseful,
-      comments,
     } = this.state;
 
     return (
@@ -109,8 +95,6 @@ export default class ExitSurvey extends React.Component {
               inline={false}
               label={"Feedback, including problems you encountered."}
               labelFor={"fair"}
-              //className={"form-group"}
-              required
             >
               <TextArea
                 id="feedback"
@@ -120,7 +104,6 @@ export default class ExitSurvey extends React.Component {
                 onChange={this.handleChange}
                 value={feedback}
                 fill={true}
-                required
               />
             </FormGroup>
           </div>

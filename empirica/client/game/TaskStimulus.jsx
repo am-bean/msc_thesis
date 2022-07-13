@@ -1,14 +1,18 @@
 import React from "react";
 
-const PlayingCard = ({ cardDetails, seat, player }) => {
+const PlayingCard = ({ cardDetails, seat, player, round }) => {
   
   const isNull = cardDetails === null
   const self = player.get("seat") === seat ? "(You)" : ""
   const partner = player.get("partner") === seat ? "(Partner)" : ""
+  const isLeader = round.get("winner") === seat
+  const cssSeat = (player.get("seat") === seat) ? "self" : (player.get("partner") === seat) ? "partner" : (player.get("follows") === seat) ? "after" : "before"
+  const cssClass = "card-thumb " +  cssSeat
   return (
-    <div className="card-thumb">
-        <strong> {seat} {self} {partner} </strong>
-        {!isNull && (  
+    <div className={cssClass}>
+        
+        <strong className="card-label"> {seat} {self} {partner} </strong>
+        {!isNull && (
           <img
           src={`/cards/${cardDetails["rank"]}_of_${cardDetails["suit"]}.svg`}
           alt={`2_of_clubs`}
@@ -40,32 +44,12 @@ export default class TaskStimulus extends React.Component {
 
     return (stage.get("type") === "round_outcome" ? (<br/>) : (
       <div className="cards-table">
-        {stage.get("type") === "outcome" ?       
-          (<h3>
-            These are all the cards played in the past round:
-          </h3>) : ( stage.get("type") === "play" ?
-
-          (<div>
-          <h3>
-            The leader this round is: {round.get("winner")} {round.get("winner") === player.get("self") ? "(You)" : ""} {round.get("winner") === player.get("partner") ? "(Partner)" : ""} 
-          </h3>
-          <h3>
-          The following cards have already been played this round:
-          </h3>
-          </div>) : 
-          
-          (<div>
-            <h3>
-              The winners of this game are:
-            </h3>
-            </div>)
-          )
-        }
         <div className="cards">
           {displayOrder.map((seat) => 
-          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat} player={player}/>
+          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat} player={player} round={round}/>
             )
             }
+          <div className="leader"><strong>{(stage.get("type") === "play") ? "Lead: " : "Winner: "} {round.get("winner")}</strong></div>
         </div>
       </div>
     ));

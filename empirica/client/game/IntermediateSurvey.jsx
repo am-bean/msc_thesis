@@ -34,7 +34,7 @@ import {
   
     exitMessage = (player, game) => {
       return (
-        <div>
+        <div className="survey">
           <h1> Survey </h1>
         </div>
       );
@@ -49,7 +49,7 @@ import {
       
       if (first) {
       return (
-        <div>
+        <div className="survey">
           {" "}
           <p>
             Please answer the following questions about your partner agent in the last two games:
@@ -108,7 +108,7 @@ import {
         </div>
       );
     } else {
-    return (<div>
+    return (<div className="survey">
       {" "}
       <p>
         Please answer the following questions about your partner agent in the last two games:

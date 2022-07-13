@@ -70,7 +70,7 @@ Empirica.onStageEnd((game, round, stage) => {
     while ((i < 1000) && (game.players.some((player) => {return round.get(`played-${player.get("seat")}`) !== undefined}))) {
       i++;
     }
-    if (game.players.every((player) => {return round.get(`played-${player.get("seat")}`) !== undefined})){
+    if (game.players.every((player) => {return (round.get(`played-${player.get("seat")}`) !== undefined) && (round.get(`played-${player.get("seat")}`) !== null)})){
 
       round.set("lead", round.get("winner"))
       const leader = round.get("lead");

@@ -185,9 +185,9 @@ export default class TaskResponse extends React.Component {
     const {player} = this.props
     return(
       <div>
-        <h3>
-          Please choose the card from your hand which you would like to play.
-        </h3>
+        <h2>
+          Click on the card which you would like to play.
+        </h2>
         <div className="cards-in-hand">
           {this.renderHand(player.round.get("hand"), false)}
         </div>

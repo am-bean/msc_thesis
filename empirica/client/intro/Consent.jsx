@@ -37,7 +37,7 @@ export default class Consent extends React.Component {
           Rocher and Dr Adam Mahdi. Participants will be asked to read the rules 
           of a card game, complete a few practices to ensure understanding, and 
           then play several rounds with an AI partner. Afterwards, we will ask 
-          you about your experience. This should take about 30 minutes. No 
+          you about your experience. This should take about 10-15 minutes. No 
           background knowledge is required. We will collect the state of the game 
           (who has which cards, and which actions are taken) for each round of 
           cards. The data will be used to assess which AI agents are best able to 
@@ -127,8 +127,8 @@ export default class Consent extends React.Component {
           <br/>
           <h3 className="bp3-heading"> Important Note </h3>
           <p className="bp3-ui-text">
-          The next page will ask you for
-          an identifier. Please make up something anonymous. This answer will be stored, so DO 
+          The next page will ask you for an identifier. Please enter 
+          something long and random. This answer will be stored, so DO 
           NOT use anything which could identify you individually.
           </p>
 
