@@ -40,12 +40,14 @@ import {
       );
     };
   
-    exitForm = (game, stage) => {
+    exitForm = (game, round, stage) => {
       const {
         partner,
         strength,
       } = this.state;
       const first = stage.name == "questions_1"
+      const partnerName = game.get("partnerNames")[Math.floor(round.get("effectiveIndex")/ 2)]
+      const previousPartner = game.get("partnerNames")[Math.floor(round.get("effectiveIndex")/ 2)-1]
       
       if (first) {
       return (
@@ -60,7 +62,7 @@ import {
               <RadioGroup
                 inline={true}
                 name="strength"
-                label="How would you rate the performance of your partner?"
+                label={"How would you rate the performance of your partner? (" + partnerName + ")"}
                 onChange={this.handleChange}
                 selectedValue={strength}
               >
@@ -119,7 +121,7 @@ import {
           <RadioGroup
             inline={true}
             name="strength"
-            label="How would you rate the performance of your partner?"
+            label={'How would you rate the performance of your partner? (' + partnerName + ")"}
             onChange={this.handleChange}
             selectedValue={strength}
           >
@@ -165,7 +167,7 @@ import {
           <RadioGroup
             inline={true}
             name="partner"
-            label="Would you rather play with this agent or the previous one as your partner?"
+            label={"Would you rather play with this agent, " + partnerName + ", or the previous one, " + previousPartner + " ,as your partner?"}
             onChange={this.handleChange}
             selectedValue={partner}
           >
@@ -203,13 +205,13 @@ import {
 
   
     render() {
-      const { player, game, stage } = this.props;
+      const { player, game, round, stage } = this.props;
       return (
         <Centered>
           <div className="exit-survey">
             {this.exitMessage(player, game)}
             <hr />
-            {this.exitForm(game, stage)}
+            {this.exitForm(game, round, stage)}
           </div>
         </Centered>
       );

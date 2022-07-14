@@ -27,6 +27,10 @@ Empirica.onRoundStart((game, round) => {
   const human = game.players.filter((player) => {return !player.bot;})[0];
   round.set("humanPartner", human.get("partner"))
 
+  const partner = game.players.filter((p) => {return p.get("seat") == human.get("partner")})[0]
+  const partnerNames = game.get("partnerNames")
+  partner.set("name", partnerNames[Math.floor(round.get("effectiveIndex")/ 2)])
+
   round.set("winner", "East");
   let nullObs = new Float32Array(600);
   round.set('cumulative-obs', nullObs);
