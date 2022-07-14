@@ -1,7 +1,8 @@
 import React from "react";
 
-const PlayingCard = ({ cardDetails, seat, player, round }) => {
+const PlayingCard = ({ cardDetails, seat, player, round, game }) => {
   
+  const name = game.players.filter((p) => p.get("seat") == seat)[0].get("name")
   const isNull = cardDetails === null
   const self = player.get("seat") === seat ? "(You)" : ""
   const partner = player.get("partner") === seat ? "(Partner)" : ""
@@ -11,7 +12,7 @@ const PlayingCard = ({ cardDetails, seat, player, round }) => {
   return (
     <div className={cssClass}>
         
-        <strong className="card-label"> {seat} {self} {partner} </strong>
+        <strong className="card-label"> {name} {self} {partner} </strong>
         {!isNull && (
           <img
           src={`/cards/${cardDetails["rank"]}_of_${cardDetails["suit"]}.svg`}
@@ -25,6 +26,11 @@ const PlayingCard = ({ cardDetails, seat, player, round }) => {
 
 export default class TaskStimulus extends React.Component {
   state = { interestValue: 0.08 };
+
+  getName = (seat, game) => {
+    const name = game.players.filter((p) => p.get("seat") == seat)[0].get("name")
+    return name
+  }
 
   render() {
     const {game, player, stage, round } = this.props;
@@ -46,10 +52,10 @@ export default class TaskStimulus extends React.Component {
       <div className="cards-table">
         <div className="cards">
           {displayOrder.map((seat) => 
-          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat} player={player} round={round}/>
+          <PlayingCard cardDetails={stage.get(`played-${seat}`)} key={seat} seat={seat} player={player} round={round} game={game}/>
             )
             }
-          <div className="leader"><strong>{(stage.get("type") === "play") ? "Lead: " : "Winner: "} {round.get("winner")}</strong></div>
+          <div className="leader"><strong>{(stage.get("type") === "play") ? "Lead: " : "Winner: "} {this.getName(round.get("winner"),game)}</strong></div>
         </div>
       </div>
     ));

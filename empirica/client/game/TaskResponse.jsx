@@ -26,6 +26,12 @@ const TimedButton = (props) => {
 
 
 export default class TaskResponse extends React.Component {
+
+  getName = (seat, game) => {
+    const name = game.players.filter((p) => p.get("seat") == seat)[0].get("name")
+    return name
+  }
+
   handleSubmit = (event, cardDetails) => {
     event.preventDefault();
     
@@ -74,6 +80,8 @@ export default class TaskResponse extends React.Component {
     const winner = ((round.get("winner") === player.get("seat")) || (round.get("winner") === player.get("partner")));
     const opponent = game.players.filter((p) => {return p.get("seat") === player.get("follows");})[0]
 
+    
+
     return (
       <div className="result">
         {winner ? (
@@ -93,13 +101,13 @@ export default class TaskResponse extends React.Component {
         <div className="result-item">
             <div className="result-entry label">Played Lead</div>
             <div className="result-entry value">
-              {round.get("lead")} {round.get("lead") === player.get("seat") ? "(You)" : ""} {round.get("lead") === player.get("partner") ? "(Partner)" : ""} 
+              {this.getName(round.get("lead"), game)} {round.get("lead") === player.get("seat") ? "(You)" : ""} {round.get("lead") === player.get("partner") ? "(Partner)" : ""} 
             </div>
           </div>
           <div className="result-item">
             <div className="result-entry label">Winning Player</div>
             <div className="result-entry value">
-              {round.get("winner")} {round.get("winner") === player.get("seat") ? "(You)" : ""} {round.get("winner") === player.get("partner") ? "(Partner)" : ""} 
+              {this.getName(round.get("winner"),game)} {round.get("winner") === player.get("seat") ? "(You)" : ""} {round.get("winner") === player.get("partner") ? "(Partner)" : ""} 
             </div>
           </div>
           <div className="result-item last-item">

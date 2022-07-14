@@ -108,6 +108,7 @@ main {
         }
 
         .card-thumb{
+          width: 100%; 
           display: grid;
           grid-template-rows: 8% 80% 8%;
           gap: 2%;
@@ -115,13 +116,21 @@ main {
           justify-content: center;
           align-content: center;
           max-width: 100%;
+          padding: 10px;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          
+          img{
+            object-fit: contain;
+            max-height: 80%;
+            max-width: 80%;
+          }
         }
       
-        img{
-          object-fit: contain;
-          max-height: 100%;
-          max-width: 100%;
-        }
+
 
         .partner {
           grid-column-start: 5;
@@ -153,7 +162,7 @@ main {
           grid-row-start: 12;
           grid-row-end: 12;
           color: #eff0f3;
-          font-size:x-large;
+          font-size:larger;
         }
       }
     }

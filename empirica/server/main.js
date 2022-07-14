@@ -31,6 +31,15 @@ Empirica.gameInit((game) => {
     player.set("follows", follows[seats[i]])
   });
 
+  const human = game.players.filter((player) => {return !player.bot;})[0];
+
+  game.players.forEach((player, i) => {
+    if (!player.bot) {player.set("name", player.id)}
+    else if (player.get("seat") === human.get("follows")) {player.set("name", "GammaBot")}
+    else if (player.get("follows") === human.get("seat")) {player.set("name", "PsiBot")}
+    else if (player.get("seat") === human.get("partner")) {player.set("name", "TauBot")}
+  })
+
   const roundCount = game.treatment.roundCount || 4;
   const playerCount = game.treatment.playerCount || 4;
   const stageDuration = game.treatment.stageLength || 120;
