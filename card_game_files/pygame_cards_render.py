@@ -1,4 +1,10 @@
-# Import the pygame module
+"""Runs a game with pre-trained agents using Pygame.
+
+args:
+
+checkpoint: str, the identifier of the desired agent in the checkpoints file
+checkpoints-folder: str, the path to the checkpoints folder, if not the expected one"""
+
 from time import sleep
 
 import pygame
@@ -27,12 +33,6 @@ parser.add_argument("--checkpoints-folder", type=str, default='../data/checkpoin
 
 
 if __name__ == '__main__':
-    """This file runs a game with pre-trained agents using Pygame.
-    
-    args:
-    
-    checkpoint: str, the identifier of the desired agent in the checkpoints file
-    checkpoints-folder: str, the path to the checkpoints folder, if not the expected one"""
 
     args = parser.parse_args()
 

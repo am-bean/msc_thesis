@@ -1,13 +1,4 @@
-"""Simple example of how to restore only one of n agents from a trained
-multi-agent Trainer using Ray tune.
-
-The trick/workaround is to use an intermediate trainer that loads the
-trained checkpoint into all policies and then reverts those policies
-that we don't want to restore, then saves a new checkpoint, from which
-tune can pick up training.
-
-Control the number of agents and policies via --num-agents and --num-policies.
-"""
+"""Loads a pretrained model as an example. The model is selected with the arguments."""
 
 import argparse
 from copy import deepcopy
@@ -33,7 +24,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--stop-timesteps", type=int, default=1)
 parser.add_argument("--num-cpus", type=int, default=4)
 parser.add_argument("--checkpoint", type=str, default='0_0')
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
+parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
 
 if __name__ == "__main__":
     run_new_model = False
@@ -80,12 +71,9 @@ if __name__ == "__main__":
             checkpoint_freq=1000,
             checkpoint_at_end=True,
         )
-
-        print("Pre-training done.")
-
         best_checkpoint = results.get_last_checkpoint(results.trials[0])
     else:
-        best_checkpoint = args.cp_filepath + best_checkpoints()[args.checkpoint]
+        best_checkpoint = args.checkpoints_folder + best_checkpoints(args.checkpoints_folder)[args.checkpoint]
     print(f".. best checkpoint was: {best_checkpoint}")
 
     new_config = deepcopy(old_config)
@@ -114,8 +102,7 @@ if __name__ == "__main__":
     # Create the checkpoint from which tune can pick up the
     # experiment.
     new_checkpoint = new_trainer.save()
-    print(".. checkpoint to restore from (all policies loaded"
-          f"): {new_checkpoint}")
+    print(f".. checkpoint to restore from (all policies loaded): {new_checkpoint}")
 
     results = tune.run(
         "DQN",
@@ -124,7 +111,5 @@ if __name__ == "__main__":
         checkpoint_freq=1,
         verbose=1
     )
-
-
 
     ray.shutdown()
