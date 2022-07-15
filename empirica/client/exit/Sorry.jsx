@@ -36,8 +36,10 @@ export default class Sorry extends React.Component {
           <p>Sorry, you were not able to play today! {msg}</p>
           <br/>
           <p>
+            <strong>If you think you reached this page by mistake, you can try again with a different name.</strong>{" "}
             <strong>If you want to try again, clear your browser cookies.</strong>{" "}
           </p>
+
 
         </div>
       </Centered>

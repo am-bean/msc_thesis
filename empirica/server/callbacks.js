@@ -43,7 +43,7 @@ Empirica.onRoundStart((game, round) => {
 // onStageStart is triggered before each stage starts.
 // It receives the same options as onRoundStart, and the stage that is starting.
 Empirica.onStageStart((game, round, stage) => {
-  console.log(`Stage ${stage.get("type")} start`)
+  console.log(`onStageStart ${stage.get("type")} start`)
 
   if (stage.get("type") === "outcome"){
     game.players.forEach((player) => {
@@ -106,7 +106,7 @@ Empirica.onStageEnd((game, round, stage) => {
         }
       })
     } else {
-      console.log("Timed out:")
+      console.log("Timed out")
       game.players.forEach((player) => {player.exit("timedOut")})
     }
   }
@@ -120,7 +120,7 @@ Empirica.onRoundEnd((game, round) => {
 // onGameEnd is triggered when the game ends.
 // It receives the same options as onGameStart.
 Empirica.onGameEnd((game) => {
-  console.log("The game", game._id, "has ended");
+  console.log("Game", game._id, "has ended");
 });
 
 // ===========================================================================

@@ -27,6 +27,12 @@ const TimedButton = (props) => {
 
 export default class TaskResponse extends React.Component {
 
+  encodeCard(card) {
+    const suitValues = {spades: 0, clubs: 1, diamonds: 2, hearts: 3};
+    const rankValues = {9: 0, 10: 1, jack: 2, queen: 3, king: 4, ace: 5};
+    return suitValues[card['suit']]*6 + rankValues[card['rank']];
+  }
+
   getName = (seat, game) => {
     const name = game.players.filter((p) => p.get("seat") == seat)[0].get("name")
     return name
@@ -61,6 +67,18 @@ export default class TaskResponse extends React.Component {
       let hand = player.round.get("hand").filter((item) => {return item !== cardDetails;});
       player.round.set("hand", hand);
       player.stage.submit();
+      
+      const agent_mapping = {East: 0, South: 1, West: 2, North: 3}
+      let stageIndex = round.get('current-stage');
+      const cumObs = round.get('cumulative-obs')
+      console.log(`Human play: ${cardDetails}`)
+      if (cardDetails) {
+        let obsIndex = agent_mapping[player.get("seat")]*6*24 + this.encodeCard(cardDetails) + (stageIndex)*24;
+        console.log(obsIndex)
+        if (!isNaN(obsIndex)) {cumObs[obsIndex] = 1;}
+      }
+      
+      round.set('cumulative-obs', cumObs);
       round.set(`submitted-${player.get("seat")}`, true);
       return;
     }

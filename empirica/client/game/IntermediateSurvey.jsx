@@ -19,13 +19,11 @@ import {
   
     handleChange = (event) => {
       const el = event.currentTarget;
-      console.log('Changed state')
       this.setState({ [el.name]: el.value });
     };
   
     handleSubmit = (event) => {
       event.preventDefault();
-      console.log('Clicked submit')
       const { game, player } = this.props;
       player.stage.submit();
       this.props.onSubmit(this.state);
@@ -167,7 +165,7 @@ import {
           <RadioGroup
             inline={true}
             name="partner"
-            label={"Would you rather play with this agent, " + partnerName + ", or the previous one, " + previousPartner + " ,as your partner?"}
+            label={"Would you rather play with this agent, " + partnerName + ", or the previous one, " + previousPartner + ", as your partner?"}
             onChange={this.handleChange}
             selectedValue={partner}
           >

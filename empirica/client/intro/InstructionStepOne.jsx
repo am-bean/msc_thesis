@@ -51,12 +51,12 @@ export default class InstructionStepOne extends React.Component {
           <div><img src="instructions/player_hand.png" alt="Example Hand"/></div>
           <ul>
           <li>
-            Your partner is seated opposite from you, and the seats are labelled 
+            Your partner is seated opposite from you. In the images below, the seats are labelled 
             using compass directions, so that North/South and East/West are the partnerships.
           </li>
           <br/>
           <li>
-            To start the game, East will go first. East will play any card from their hand to 'lead'.
+            To start the game, one player will play any card from their hand to 'lead'. In the example, this was East.
           </li>
           <br/>
           <li>

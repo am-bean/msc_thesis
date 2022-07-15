@@ -15,6 +15,9 @@ export default class Thanks extends React.Component {
           description="Close this tab to quit"
           //action={"what is an actions?"}
         />
+        <strong>If you think you reached this page by mistake, you can try again
+           by clearing your brower history. You must choose a name which has not
+           been used before. </strong>
       </div>
     );
   }

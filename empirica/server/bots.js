@@ -9,7 +9,6 @@ const path = require('path');
 Empirica.bot("bob", {
   // // NOT SUPPORTED Called at the beginning of each stage (after onRoundStart/onStageStart)
   onStageStart(bot, game, round, stage, players) {
-    console.log("Called bob on stage start")
   },
 
   encodeCard(card) {
@@ -48,6 +47,7 @@ Empirica.bot("bob", {
         // read from results
         const dataC = results.output.data;
         const maskData = dataC.map((x, i) => x + infMask[i])
+        console.log("Q values:")
         console.log(maskData)
         const action = [].reduce.call(maskData, (m, c, i, arr) => c > arr[m] ? i : m, 0)
         const actionCard = this.decodeCard(action)
@@ -74,8 +74,6 @@ onStageTick(bot, game, round, stage, secondsRemaining) {
       const hasLead = (bot.get("seat") === round.get("winner"))
       const isFollowing = (round.get(`submitted-${bot.get("follows")}`))
       let hasSuit = false
-      if (hasLead) {console.log(`Bot ${bot.get("seat")} leading`)}
-      if (isFollowing) {console.log(`Bot ${bot.get("seat")} following`)}
       if (!hasLead) {hasSuit = hand.some((item) => {return item['suit'] === stage.get(`played-${round.get("winner")}`)['suit'];})}
 
       let actionMask = new Float32Array(24);
@@ -94,30 +92,40 @@ onStageTick(bot, game, round, stage, secondsRemaining) {
       Object.keys(cumObs).forEach((key) => {
         obs[key] = cumObs[key];
       });
-      console.log(obs)
+      let posObs = Object.keys(cumObs).filter((key) => {
+        return obs[key] !== 0;
+      });
+      // Now add in the hand
+      hand.forEach((card) => {obs[this.encodeCard(card)] = 1})
+      console.log(posObs)
+      console.log(obs)      
 
       const humanPartner = round.get("partner") 
       const modelPath = (humanPartner == bot.get("seat")) ? round.get("partnerModel") : round.get("opponentModel")
       this.loadNN(actionMask, obs, modelPath).then(action => 
-        {console.log(action)
+        {
         stage.set(`played-${bot.get("seat")}`, action);
         round.set(`played-${bot.get("seat")}`, action);
         let hand = bot.round.get("hand").filter((item) => {return !((item['rank'] === action['rank']) && (item['suit'] === action['suit']));});
         bot.round.set("hand", hand);
         round.set(`submitted-${bot.get("seat")}`, true);
         bot.stage.submit();
-      })
+      
 
       const agent_mapping = {East: 0, South: 1, West: 2, North: 3}
       let seat = bot.get("seat");
       let stageIndex = round.get('current-stage');
       let card = stage.get(`played-${seat}`);
+      console.log("Card played:")
+      console.log(card)
       if (card) {
-        let obsIndex = agent_mapping[seat]*6*24 + this.encodeCard(card) + (stageIndex - 1)*24;
-        if (!isNaN(obsIndex)) {obs[obsIndex] = 1;}
+        // Note that the first row should be blank from this to allow adding in hand info
+        let obsIndex = agent_mapping[seat]*6*24 + this.encodeCard(card) + (stageIndex)*24;
+        console.log(obsIndex)
+        if (!isNaN(obsIndex)) {cumObs[obsIndex] = 1;}
       }
-      round.set('cumulative-obs', obs);
-
+      round.set('cumulative-obs', cumObs);
+      })
     }
   }
   if ((stage.get("type") === "outcome") || (stage.get("type") === "round_outcome")) {
