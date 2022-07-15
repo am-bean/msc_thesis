@@ -1,6 +1,6 @@
 import pygame
 from pygame_constants import *
-from cards_env import RANK_LOOKUP, SUIT_LOOKUP, N_ITERS, RANK_REVERSE, SUIT_REVERSE
+from dqn_agents.cards_env import RANK_LOOKUP, SUIT_LOOKUP, N_ITERS, RANK_REVERSE, SUIT_REVERSE
 
 
 # Define a card object by extending pygame.sprite.Sprite

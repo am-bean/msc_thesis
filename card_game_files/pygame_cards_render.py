@@ -2,6 +2,7 @@
 from time import sleep
 
 import pygame
+import argparse
 
 import ray
 import dqn_agents.best_checkpoints as best_checkpoints
@@ -19,14 +20,22 @@ from pygame.locals import (
     QUIT,
 )
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--checkpoint", type=str, default='0_0')
+parser.add_argument("--local-folder", type=str, default='C:/Users/Andre/ray_results/DQN/aws/')
+parser.add_argument("--checkpoints-folder", type=str, default='C:/Users/Andre/OneDrive/Documents/GitHub/msc_thesis/dqn_agents/')
+
 
 if __name__ == '__main__':
+
+    args = parser.parse_args()
 
     # Initialize pygame
     pygame.init()
 
     # Initialize pretrained model
-    checkpoint = 'C:/Users/Andre/ray_results/DQN/' + best_checkpoints.best_checkpoints()['3_2']
+    checkpoint = args.local_folder + best_checkpoints.best_checkpoints(args.checkpoints_folder)[args.checkpoint]
     my_env, trainer = load_pretrained_player(checkpoint)
     obs = my_env.reset()
 
