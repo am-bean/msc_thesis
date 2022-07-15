@@ -28,6 +28,13 @@ parser.add_argument("--checkpoints-folder", type=str, default='C:/Users/Andre/On
 
 
 if __name__ == '__main__':
+    """This file runs a game with pre-trained agents using Pygame.
+    
+    args:
+    
+    checkpoint: str, the identifier of the desired agent in the checkpoints file
+    local-folder: str, the path to the rllib agent checkpoint files
+    checkpoints-folder: str, the path to the best_checkpoints.txt file"""
 
     args = parser.parse_args()
 
