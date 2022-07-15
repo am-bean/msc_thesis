@@ -1,9 +1,9 @@
+"""Trains a new DQN agent in the cards environment with random partners and opponents"""
+
 import os
-from copy import deepcopy
+import re
 import shutil
 
-import numpy as np
-import platform
 import ray
 import argparse
 from ray import tune
@@ -23,10 +23,11 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=1)
 parser.add_argument("--checkpoint-freq", type=int, default=1)
-parser.add_argument("--run-id", type=str, default='0_0')
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/')
+parser.add_argument("--checkpoint", type=str, default='0_0')
+parser.add_argument('--checkpoints-folder', type=str, default='C:/Users/Andre/ray_results/DQN/')
 parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
 parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
+parser.add_argument('--copy_to_local', type=bool, default=False)
 parser.add_argument('--shutdown', type=bool, default=True)
 
 if __name__ == "__main__":
@@ -77,32 +78,22 @@ if __name__ == "__main__":
     ray.shutdown()
 
     cp = results.get_last_checkpoint(results.trials[0])
-    filepath = args.cp_filepath.replace('/', '\\')
+    filepath = args.checkpoints_folder.replace('/', '\\')
     file = cp.local_path.replace(filepath, "")
-    checkpoint_name = args.checkpoint_name
-    folder = cp.local_path.replace(checkpoint_name.replace('/', '\\'), "")
+    folder = re.sub(r"checkpoint.*$", "", cp.local_path)
     folder_only = folder.replace(filepath, "")
-    update_best_checkpoints(file, args.run_id)
+    update_best_checkpoints(file, args.checkpoint)
 
-    machine = platform.uname()[1]
-    if machine == 'AndrewXPS15':
-        print(f'Last checkpoint: {file}')
-
-    else:
+    if args.copy_to_local:
         src_folder = folder
         dst_folder = args.local_folder + '/' + folder_only
         dst_folder = dst_folder.replace('/', '\\')
-        # Using try to protect against the connection to the remote server dropping
-        try:
-            shutil.copytree(src_folder, "\\" + dst_folder)
-            print(f"Copied to {dst_folder}")
-        finally:
-            pass
+        shutil.copytree(src_folder, "\\" + dst_folder)
+
+        # TODO: remove this and set the correct ENV variable to make it obsolete
         unneeded_files = ['params.json', 'params.pkl', 'progress.csv', 'result.json']
         for f in unneeded_files:
-            try:
-                os.remove(folder + '/' + f)
-            finally:
-                pass
+            os.remove(folder + '/' + f)
+
         if args.shutdown:
             os.system("shutdown /s /t 30")
