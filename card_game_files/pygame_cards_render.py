@@ -23,8 +23,7 @@ from pygame.locals import (
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--checkpoint", type=str, default='0_0')
-parser.add_argument("--local-folder", type=str, default='C:/Users/Andre/ray_results/DQN/aws/')
-parser.add_argument("--checkpoints-folder", type=str, default='C:/Users/Andre/OneDrive/Documents/GitHub/msc_thesis/dqn_agents/')
+parser.add_argument("--checkpoints-folder", type=str, default='../data/checkpoints/')
 
 
 if __name__ == '__main__':
@@ -33,8 +32,7 @@ if __name__ == '__main__':
     args:
     
     checkpoint: str, the identifier of the desired agent in the checkpoints file
-    local-folder: str, the path to the rllib agent checkpoint files
-    checkpoints-folder: str, the path to the best_checkpoints.txt file"""
+    checkpoints-folder: str, the path to the checkpoints folder, if not the expected one"""
 
     args = parser.parse_args()
 
@@ -42,7 +40,7 @@ if __name__ == '__main__':
     pygame.init()
 
     # Initialize pretrained model
-    checkpoint = args.local_folder + best_checkpoints.best_checkpoints(args.checkpoints_folder)[args.checkpoint]
+    checkpoint = args.checkpoints_folder + best_checkpoints.best_checkpoints(args.checkpoints_folder)[args.checkpoint]
     my_env, trainer = load_pretrained_player(checkpoint)
     obs = my_env.reset()
 

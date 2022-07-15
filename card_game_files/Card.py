@@ -13,14 +13,14 @@ class Card(pygame.sprite.Sprite):
         self.suit = suit
         self.surf = None
         self.show_front = None
-        frontpath = "../card_images/png/" + rank + "_of_" + suit +".png"
+        frontpath = "../data/images/" + rank + "_of_" + suit +".png"
         front_img = pygame.image.load(frontpath).convert_alpha()
         front_img = pygame.transform.smoothscale(front_img, (CARD_WIDTH * BORDER_THICKNESS, CARD_HEIGHT * BORDER_THICKNESS))
         self.front = pygame.Surface((CARD_WIDTH * BORDER_THICKNESS, CARD_HEIGHT * BORDER_THICKNESS))
         self.front.fill(WHITE)
         self.front.blit(front_img, self.front.get_rect())
 
-        backpath = "../card_images/png/back.png"
+        backpath = "../data/images/back.png"
 
         back_img = pygame.image.load(backpath).convert_alpha()
         pygame.transform.threshold(dest_surface=back_img, surface=back_img,
