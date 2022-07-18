@@ -1,4 +1,10 @@
-"""Trains a new DQN agent in the cards environment with random partners and opponents"""
+"""Trains a new DQN agent in the cards environment with random partners and opponents
+
+Recommend setting environment variable TUNE_DISABLE_AUTO_CALLBACK_LOGGERS=1
+to avoid very large log files
+
+New files will be written to a DQN folder within the specified filepath
+"""
 
 import os
 import re
@@ -23,12 +29,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--stop-iters", type=int, default=1)
 parser.add_argument("--checkpoint-freq", type=int, default=1)
-parser.add_argument("--checkpoint", type=str, default='0_0')
-parser.add_argument('--checkpoints-folder', type=str, default='C:/Users/Andre/ray_results/DQN/')
-parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
-parser.add_argument('--checkpoint-name', type=str, default='/checkpoint_000001/checkpoint-1')
-parser.add_argument('--copy_to_local', type=bool, default=False)
-parser.add_argument('--shutdown', type=bool, default=True)
+parser.add_argument('--local-folder', type=str, default="../data/checkpoints")
+parser.add_argument('--shutdown', type=bool, default=False)
 
 if __name__ == "__main__":
 
@@ -72,28 +74,11 @@ if __name__ == "__main__":
              stop={"training_iteration": args.stop_iters},
              checkpoint_freq=args.checkpoint_freq,
              config=config,
+             local_dir=args.local_folder,
              verbose=0
              )
 
     ray.shutdown()
 
-    cp = results.get_last_checkpoint(results.trials[0])
-    filepath = args.checkpoints_folder.replace('/', '\\')
-    file = cp.local_path.replace(filepath, "")
-    folder = re.sub(r"checkpoint.*$", "", cp.local_path)
-    folder_only = folder.replace(filepath, "")
-    update_best_checkpoints(file, args.checkpoint)
-
-    if args.copy_to_local:
-        src_folder = folder
-        dst_folder = args.local_folder + '/' + folder_only
-        dst_folder = dst_folder.replace('/', '\\')
-        shutil.copytree(src_folder, "\\" + dst_folder)
-
-        # TODO: remove this and set the correct ENV variable to make it obsolete
-        unneeded_files = ['params.json', 'params.pkl', 'progress.csv', 'result.json']
-        for f in unneeded_files:
-            os.remove(folder + '/' + f)
-
-        if args.shutdown:
-            os.system("shutdown /s /t 30")
+    if args.shutdown:
+        os.system("shutdown /s /t 30")
