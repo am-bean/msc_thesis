@@ -26,7 +26,7 @@ parser.add_argument("--num-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=4)
 parser.add_argument("--first-checkpoint", type=str, default='l1_8')
 parser.add_argument("--second_checkpoint", type=str, default='0_0')
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Andre/ray_results/DQN/aws/')
+parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
 
 
 if __name__ == "__main__":
@@ -72,8 +72,8 @@ if __name__ == "__main__":
     }
 
     # Load the checkpoint.
-    first_checkpoint = args.cp_filepath + best_checkpoints()[args.first_checkpoint]
-    second_checkpoint = args.cp_filepath + best_checkpoints()[args.second_checkpoint]
+    first_checkpoint = args.checkpoints_folder + best_checkpoints()[args.first_checkpoint]
+    second_checkpoint = args.checkpoints_folder + best_checkpoints()[args.second_checkpoint]
 
     second_config = deepcopy(first_config)
     second_config["multiagent"] = {
@@ -121,5 +121,3 @@ if __name__ == "__main__":
             print(cum_rewards)
 
     ray.shutdown()
-
-    update_best_checkpoints()

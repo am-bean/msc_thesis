@@ -31,7 +31,7 @@ def show_curec(screen, screen_rect):
     r_ethics_rect = r_ethics.get_rect()
     r_ethics_rect.left = curec_rect.left
     r_ethics_rect.bottom = curec_rect.top
-    logo = pygame.image.load('../card_images/oxford_logo.png').convert_alpha()
+    logo = pygame.image.load('../data/images/oxford_logo.png').convert_alpha()
     logo = pygame.transform.smoothscale(logo, (CARD_WIDTH, CARD_WIDTH))
     logo_rect = logo.get_rect()
     logo_rect.bottom = r_ethics_rect.top - CARD_WIDTH * .1

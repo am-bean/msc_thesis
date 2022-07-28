@@ -1,11 +1,7 @@
 """Loads a previously trained set of agents and then continues to train one of them.
 """
 
-import re
 import argparse
-import os
-import platform
-import shutil
 from copy import deepcopy
 from random import shuffle
 
@@ -18,7 +14,7 @@ from ray.tune.registry import register_env
 from ray.rllib.utils.framework import try_import_torch
 
 import cards_env
-from best_checkpoints import best_checkpoints, update_best_checkpoints
+from best_checkpoints import best_checkpoints
 from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
@@ -27,22 +23,21 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--stop-iters", type=int, default=5000)
-parser.add_argument('--checkpoint_freq', type=int, default=5000)
+parser.add_argument("--stop-iters", type=int, default=1)
+parser.add_argument('--checkpoint_freq', type=int, default=1)
 parser.add_argument("--num-cpus", type=int, default=4)
 parser.add_argument("--repetitions", type=int, default=32)
-parser.add_argument("--checkpoint", type=str, default='l3_4')
-parser.add_argument('--cp-filepath', type=str, default='C:/Users/Administrator/ray_results/DQN/')
-parser.add_argument('--local-folder', type=str, default="/tsclient/C/Users/Andre/ray_results/DQN/aws")
+parser.add_argument("--checkpoint", type=str, default='0_0')
+parser.add_argument('--checkpoints-pool', nargs='+', type=str, default=['l1_4', 'l2_4', 'l3_4', 'l4_4'])
+parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
 parser.add_argument('--shutdown', type=bool, default=True)
-parser.add_argument('--copy_to_local', type=bool, default=False)
 parser.add_argument('--use-checkpoints', type=bool, default=False)
 
 if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    checkpoints_pool = ['l1_4', 'l2_4', 'l3_4', 'l4_4']
+    checkpoints_pool = args.checkpoints_pool
     checkpoints_pool.append(args.checkpoint)
     checkpoints_pool = list(set(checkpoints_pool))
     raw_checkpoints_pool = checkpoints_pool.copy()
@@ -110,10 +105,10 @@ if __name__ == "__main__":
         for checkpoint in checkpoints_pool:
             # Restore all policies from checkpoint.
             if checkpoint[-1] in subs.keys():
-                long_checkpoint = best_checkpoints()[checkpoint[:-1]].replace('\checkpoint_040000\checkpoint-40000', subs[checkpoint[-1]])
+                long_checkpoint = best_checkpoints(args.checkpoints_folder)[checkpoint[:-1]].replace('\checkpoint_040000\checkpoint-40000', subs[checkpoint[-1]])
             else:
-                long_checkpoint = best_checkpoints()[checkpoint]
-            dummy_trainer.restore(args.cp_filepath + long_checkpoint)
+                long_checkpoint = best_checkpoints(args.checkpoints_folder)[checkpoint]
+            dummy_trainer.restore(args.checkpoints_folder + long_checkpoint)
             # Get trained weights
             trained_weights = dummy_trainer.get_weights()
             # Set all the weights to the trained agent weights
@@ -137,29 +132,13 @@ if __name__ == "__main__":
             config=new_config,
             checkpoint_freq=args.checkpoint_freq,
             reuse_actors=True,
-            # max_concurrent_trials=1000,
+            local_dir=args.checkpoints_folder,
             verbose=1
         )
 
         cp = results.get_last_checkpoint(results.trials[0])
 
         ray.shutdown()
-
-        filepath = args.cp_filepath.replace('/', '\\')
-        file = cp.local_path.replace(filepath, "")
-        folder = re.sub(r"checkpoint.*$", "", cp.local_path)
-        folder_only = folder.replace(filepath, "")
-
-        if args.copy_to_local:
-            src_folder = folder
-            dst_folder = args.local_folder + '/' + folder_only
-            dst_folder = dst_folder.replace('/', '\\')
-            # Using try to protect against the connection to the remote server dropping
-            try:
-                shutil.copytree(src_folder, "\\" + dst_folder)
-                print(f'Copied to {dst_folder}')
-            except:
-                pass
 
         trained_weights = new_trainer.get_weights()
         for j, pid in enumerate(trained_weights.keys()):

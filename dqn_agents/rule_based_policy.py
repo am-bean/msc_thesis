@@ -1,3 +1,8 @@
+"""Hand-coded policy that returns rule-based actions.
+
+The commented out bits of code result in a much stronger agent which would have given the rule-based training an
+advantage compared to other methods."""
+
 import numpy as np
 
 from ray.rllib.examples.policy.random_policy import RandomPolicy
@@ -7,7 +12,6 @@ from dqn_agents import cards_env
 
 
 class RuleBasedPolicy(RandomPolicy):
-    """Hand-coded policy that returns rule-based actions."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

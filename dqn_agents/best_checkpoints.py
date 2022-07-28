@@ -2,9 +2,9 @@ import gc
 import json
 
 
-def best_checkpoints():
+def best_checkpoints(filepath=''):
 
-    with open('best_checkpoints.txt', 'r') as f:
+    with open(filepath + 'best_checkpoints.txt', 'r') as f:
         checkpoints = json.loads(f.read())
     f.close()
 
