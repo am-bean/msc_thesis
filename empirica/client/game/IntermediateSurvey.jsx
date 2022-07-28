@@ -23,11 +23,12 @@ import {
     };
   
     handleSubmit = (event) => {
+      console.log("Survey results:");
       event.preventDefault();
-      const { game, player } = this.props;
+      const { game, round, player } = this.props;
+      round.set("survey", this.state);
+      console.log(this.state['partner']);
       player.stage.submit();
-      this.props.onSubmit(this.state);
-      this.props.onNext();
     };
   
     exitMessage = (player, game) => {
@@ -54,7 +55,7 @@ import {
           <p>
             Please answer the following questions about your partner agent in the last two games:
           </p>
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
             
             <div className="form-line">
               <RadioGroup
@@ -113,7 +114,7 @@ import {
       <p>
         Please answer the following questions about your partner agent in the last two games:
       </p>
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
         
         <div className="form-line">
           <RadioGroup
