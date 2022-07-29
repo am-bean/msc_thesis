@@ -20,7 +20,12 @@ Empirica.onRoundStart((game, round) => {
   const shuffled = _.shuffle(deck)
 
   game.players.forEach((player, i) => {
-    player.round.set("hand", shuffled.slice(i*6, (i+1)*6));
+    const suitValues = {spades: 0, clubs: 1, diamonds: 2, hearts: 3};
+    const rankValues = {9: 0, 10: 1, jack: 2, queen: 3, king: 4, ace: 5};
+  
+    let shuffledHand = shuffled.slice(i*6, (i+1)*6)
+    let sortedHand = shuffledHand.sort((a, b) => (suitValues[a['suit']]*6 + rankValues[a['rank']] > suitValues[b['suit']]*6 + rankValues[b['rank']]) ? 1 : -1)
+    player.round.set("hand", sortedHand);
     player.round.set("score", 0)
   })
 
