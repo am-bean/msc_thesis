@@ -17,6 +17,7 @@ from best_checkpoints import best_checkpoints, update_best_checkpoints
 from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
+import numpy as np
 
 torch, nn = try_import_torch()
 
@@ -24,19 +25,17 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--num-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--first-checkpoint", type=str, default='0_0')
-parser.add_argument("--second_checkpoint", type=str, default='0_0')
+parser.add_argument("--checkpoint", type=str, default='0_0')
 parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
 
 
 if __name__ == "__main__":
-    '''Takes two pre-trained checkpoints and compares their performance competing head to head.
+    '''Takes a pre-trained checkpoint and benchmarks the performance competing with random opponents and partner.
     
     Args:
     num-iters: int, how many games to play for the test
     num-cpus: int, how many CPUs to request with Ray
-    first-checkpoint: str, the first checkpoint for testing
-    second-checkpoint: str, the second checkpoint for testing
+    checkpoint: str, the checkpoint for testing
     '''
 
     args = parser.parse_args()
@@ -68,40 +67,20 @@ if __name__ == "__main__":
             "player_3": (MaskedRandomPolicy, obs_space, act_space, {}),
         },
         "policy_mapping_fn": lambda agent_id: agent_id,
-        "policies_to_train": ["player_0"],
+        "policies_to_train": ['policy_0'],
     }
 
     # Load the checkpoint.
-    first_checkpoint = args.checkpoints_folder + best_checkpoints(args.checkpoints_folder)[args.first_checkpoint]
-    second_checkpoint = args.checkpoints_folder + best_checkpoints(args.checkpoints_folder)[args.second_checkpoint]
-
-    second_config = deepcopy(first_config)
-    second_config["multiagent"] = {
-        "policies": {
-            "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_1": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_2": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-            "player_3": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
-        },
-        "policy_mapping_fn": lambda agent_id: agent_id,
-        "policies_to_train": ["player_0"],
-    }
+    first_checkpoint = args.checkpoints_folder + best_checkpoints(args.checkpoints_folder)[args.checkpoint]
 
     # Create a dummy Trainer to load our checkpoint.
     first_dummy_trainer = DQNTrainer(config=first_config)
-    second_dummy_trainer = DQNTrainer(config=first_config)
-    new_trainer = DQNTrainer(config=second_config)
+    new_trainer = DQNTrainer(config=first_config)
     # Restore all policies from checkpoint.
     first_dummy_trainer.restore(first_checkpoint)
-    second_dummy_trainer.restore(second_checkpoint)
     # Get trained weights
     first_trained_weights = first_dummy_trainer.get_weights()
-    second_trained_weights = first_dummy_trainer.get_weights()
-    # Set all the weights to the trained agent weights
-    use_first_trained = ['player_0', 'player_2']
-    use_second_trained = ['player_1', 'player_3']
-    new_trainer.set_weights({pid: first_trained_weights['player_0'] for pid in use_first_trained})
-    new_trainer.set_weights({pid: second_trained_weights['player_0'] for pid in use_second_trained})
+    new_trainer.set_weights({'player_0': first_trained_weights['player_0']})
 
     # Loop over games to collect results
     cum_rewards = {'player_0': 0, 'player_1': 0, 'player_2': 0, 'player_3': 0}
@@ -111,8 +90,10 @@ if __name__ == "__main__":
         obs = my_env.reset()
         while not done:
             agent = list(obs.keys())[0]
-            print(obs[agent])
-            action = new_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
+            if agent == 'player_0':
+                action = new_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
+            else:
+                action = np.random.choice(np.nonzero(obs[agent]['action_mask'])[0])
             action_dict = {agent: action}
             obs, reward, dones, info = my_env.step(action_dict)
             done = dones['__all__']
