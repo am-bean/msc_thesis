@@ -18,6 +18,7 @@ from train_with_random_agents import MaskedRandomPolicy
 from train_with_random_agents import TorchMaskedActions
 from mask_dqn_model import default_config
 import numpy as np
+import pandas as pd
 
 torch, nn = try_import_torch()
 
@@ -25,7 +26,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--num-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='0_0')
+parser.add_argument("--checkpoint", type=str, default='l1_8')
 parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
 
 
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     new_trainer.set_weights({'player_0': first_trained_weights['player_0']})
 
     # Loop over games to collect results
-    cum_rewards = {'player_0': 0, 'player_1': 0, 'player_2': 0, 'player_3': 0}
+    cum_rewards = []
     for i in range(args.num_iters):
         done = False
         my_env.seed(i)
@@ -97,9 +98,10 @@ if __name__ == "__main__":
             action_dict = {agent: action}
             obs, reward, dones, info = my_env.step(action_dict)
             done = dones['__all__']
-        for player, reward in reward.items():
-            cum_rewards[player] += reward
+        if 'player_0' in reward.keys():
+            cum_rewards.append(reward['player_0'])
         if i%(args.num_iters//5) == (args.num_iters//5)-1:
-            print(cum_rewards)
+            print(np.mean(cum_rewards))
+            print(np.std(cum_rewards))
 
     ray.shutdown()
