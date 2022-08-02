@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--num-iters", type=int, default=5000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='rb4_4')
+parser.add_argument("--checkpoint", type=str, default='l1_8')
 parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
 
 
@@ -71,17 +71,29 @@ if __name__ == "__main__":
         "policies_to_train": ['policy_0'],
     }
 
+    second_config = first_config.copy()
+    second_config["multiagent"] = {
+        "policies": {
+            "player_0": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+            "player_1": (MaskedRandomPolicy, obs_space, act_space, {}),
+            "player_2": (None, obs_space, act_space, {"model": {"custom_model": "masked_dqn"}}),
+            "player_3": (MaskedRandomPolicy, obs_space, act_space, {}),
+        },
+        "policy_mapping_fn": lambda agent_id: agent_id,
+        "policies_to_train": [],
+    }
+
     # Load the checkpoint.
     first_checkpoint = args.checkpoints_folder + best_checkpoints(args.checkpoints_folder)[args.checkpoint]
 
     # Create a dummy Trainer to load our checkpoint.
     first_dummy_trainer = DQNTrainer(config=first_config)
-    new_trainer = DQNTrainer(config=first_config)
+    new_trainer = DQNTrainer(config=second_config)
     # Restore all policies from checkpoint.
     first_dummy_trainer.restore(first_checkpoint)
     # Get trained weights
     first_trained_weights = first_dummy_trainer.get_weights()
-    new_trainer.set_weights({'player_0': first_trained_weights['player_0']})
+    new_trainer.set_weights({'player_0': first_trained_weights['player_0'], 'player_2': first_trained_weights['player_0']})
 
     # Loop over games to collect results
     cum_rewards = []
@@ -91,7 +103,7 @@ if __name__ == "__main__":
         obs = my_env.reset()
         while not done:
             agent = list(obs.keys())[0]
-            if agent == 'player_0':
+            if (agent == 'player_0') or (agent == 'player_2'):
                 action = new_trainer.compute_single_action(obs[agent], policy_id=agent, explore=False)
             else:
                 action = np.random.choice(np.nonzero(obs[agent]['action_mask'])[0])
