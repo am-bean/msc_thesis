@@ -1,6 +1,7 @@
 """Loads a pre-trained agent to play a demo game
 """
 
+import json
 import argparse
 from copy import deepcopy
 
@@ -24,10 +25,11 @@ torch, nn = try_import_torch()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--num-iters", type=int, default=5000)
+parser.add_argument("--num-iters", type=int, default=20000)
 parser.add_argument("--num-cpus", type=int, default=4)
-parser.add_argument("--checkpoint", type=str, default='rb4_4')
+parser.add_argument("--checkpoint", type=str, default='pool')
 parser.add_argument('--checkpoints-folder', type=str, default='../data/checkpoints/')
+parser.add_argument('--out-file', type=str, default='../data/benchmarks/pl_rand_bmark.json')
 
 
 if __name__ == "__main__":
@@ -103,5 +105,9 @@ if __name__ == "__main__":
         if i%(args.num_iters//5) == (args.num_iters//5)-1:
             print(np.mean(cum_rewards))
             print(np.std(cum_rewards))
+
+    with open(args.out_file,'w') as f:
+        json.dump(cum_rewards, f)
+    f.close()
 
     ray.shutdown()
